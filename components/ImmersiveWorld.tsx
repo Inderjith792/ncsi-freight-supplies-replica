@@ -17,6 +17,20 @@ export function ImmersiveWorld() {
   const [active, setActive] = useState(0);
   const [menu, setMenu] = useState(false);
   const [inquiry, setInquiry] = useState(false);
+  const pointerRef = useRef({ x: 0, y: 0, angle: 0 });
+
+  function handlePointerMove(event: React.PointerEvent<HTMLElement>) {
+    const p = pointerRef.current;
+    const dx = event.clientX - p.x;
+    const dy = event.clientY - p.y;
+    if (Math.abs(dx) + Math.abs(dy) > 1) p.angle = Math.atan2(dy, dx) * (180 / Math.PI);
+    p.x = event.clientX;
+    p.y = event.clientY;
+    const root = document.documentElement;
+    root.style.setProperty("--cursor-x", `${event.clientX}px`);
+    root.style.setProperty("--cursor-y", `${event.clientY}px`);
+    root.style.setProperty("--cursor-angle", `${p.angle}deg`);
+  }
 
   useEffect(() => {
     let disposed = false;
@@ -198,7 +212,7 @@ export function ImmersiveWorld() {
 
   const stage = stages[active];
   return (
-    <main className="ncsi-journey" style={{ "--progress": progress, "--phase": active } as React.CSSProperties}>
+    <main className="ncsi-journey" onPointerMove={handlePointerMove} style={{ "--progress": progress, "--phase": active } as React.CSSProperties}>
       <canvas ref={canvasRef} className="journey-webgl" aria-label="Rotating nebula tinted with NCSI teal palette" />
       <div className="journey-runway" aria-hidden="true">{stages.map((item) => <div key={item.id} id={"runway-" + item.id} />)}</div>
       <div className={"journey-stage mode-" + stage.id}>
@@ -219,7 +233,7 @@ export function ImmersiveWorld() {
         </div>
         <div className="journey-rail">{stages.map((item, index) => <button key={item.id} aria-label={"Go to " + item.label} className={index === active ? "is-active" : ""} onClick={() => scrollToStage(index)}><span>{item.no}</span><i /></button>)}</div>
         <div className="journey-footer"><span>SCROLL TO ROTATE THE WORLD <b>↓</b></span><div className="journey-progress"><i style={{ transform: "scaleX(" + progress + ")" }} /></div><b>{String(Math.round(progress * 100)).padStart(2, "0")}%</b></div>
-        <div className="journey-cursor" aria-hidden="true"><i /></div>
+        <div className={"journey-cursor " + (stage.id === "ocean" ? "cursor-ship" : stage.id === "air" ? "cursor-flight" : "cursor-default")} aria-hidden="true"><span className="cursor-vehicle">{stage.id === "ocean" ? "🚢" : stage.id === "air" ? "✈" : "·"}</span><i /></div>
         {inquiry && <div className="journey-inquiry-backdrop" role="dialog" aria-modal="true" aria-label="Start a shipment inquiry"><div className="journey-inquiry"><button className="inquiry-close" onClick={() => setInquiry(false)} aria-label="Close inquiry">×</button><div className="journey-eyebrow"><i /> YOUR NEXT MOVE</div><h2>Let&apos;s move<br /><em>something forward.</em></h2><p>Tell us what you need to lease or move.</p><LeadForm kind="quote" buttonLabel="Send inquiry ↗" /></div></div>}
       </div>
       <div className="journey-end" aria-hidden="true"><span>YOU ARE HERE.</span><b>NCSI FREIGHT SUPPLIES</b><span>THE WORLD KEEPS MOVING.</span></div>
