@@ -26,7 +26,7 @@ export function ImmersiveWorld() {
     if (Math.abs(dx) + Math.abs(dy) > 1) p.angle = Math.atan2(dy, dx) * (180 / Math.PI);
     p.x = event.clientX;
     p.y = event.clientY;
-    const root = document.documentElement;
+    const root = event.currentTarget;
     root.style.setProperty("--cursor-x", `${event.clientX}px`);
     root.style.setProperty("--cursor-y", `${event.clientY}px`);
     root.style.setProperty("--cursor-angle", `${p.angle}deg`);
