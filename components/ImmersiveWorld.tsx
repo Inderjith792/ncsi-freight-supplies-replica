@@ -58,15 +58,32 @@ export function ImmersiveWorld() {
             return;
           }
           const model = gltf.scene;
+          // Oceanic colour grade: shift the nebula's existing colours toward deep-sea blue,
+          // cyan and teal while preserving its texture maps and overall luminosity.
+          const oceanTint = new THREE.Color("#168c9d");
           model.traverse((object) => {
             const mesh = object as import("three").Mesh;
             if (!mesh.isMesh) return;
             mesh.frustumCulled = false;
             const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
             materials.forEach((material) => {
-              const m = material as import("three").Material & { side?: import("three").Side; depthWrite?: boolean };
+              const m = material as import("three").Material & {
+                side?: import("three").Side;
+                depthWrite?: boolean;
+                color?: THREE.Color;
+                emissive?: THREE.Color;
+                emissiveIntensity?: number;
+              };
               m.side = THREE.DoubleSide;
               m.depthWrite = false;
+              // A subtle multiplicative tint keeps nebula details visible instead of painting
+              // the whole model a flat cyan. Material maps remain untouched.
+              if (m.color) m.color.lerp(oceanTint, 0.34);
+              if (m.emissive) {
+                m.emissive.lerp(new THREE.Color("#063f58"), 0.48);
+                m.emissiveIntensity = Math.max(m.emissiveIntensity ?? 0, 0.22);
+              }
+              m.needsUpdate = true;
             });
           });
           const bounds = new THREE.Box3().setFromObject(model);
