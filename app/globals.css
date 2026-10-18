@@ -530,6 +530,6 @@ html{scroll-behavior:smooth;scroll-padding-top:0}body{background:var(--world-bg)
 @media(hover:none),(pointer:coarse){.ncsi-journey .journey-cursor{display:none!important}}
 @media(prefers-reduced-motion:reduce){.ncsi-journey .journey-cursor:before,.ncsi-journey .journey-cursor:after,.ncsi-journey .journey-cursor .cursor-vehicle{animation:none!important}}
 
-/* Pointer anchor fix: cursor coordinates are assigned directly from pointer events. */
+/* Keep left/top overridable by direct pointer coordinates set from JS. */
 .ncsi-journey .journey-cursor{position:fixed!important;left:0;top:0;right:auto!important;bottom:auto!important;margin:0!important;pointer-events:none!important;transform:translate(-50%,-50%) rotate(var(--cursor-angle,0deg))!important}
 .ncsi-journey .journey-cursor.cursor-ship{transform:translate(-50%,-50%)!important}
