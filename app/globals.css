@@ -76,3 +76,6 @@ html{scroll-behavior:smooth;scroll-padding-top:0}body{background:var(--world-bg)
 @keyframes vessel-drift{from{translate:-1% 0;rotate:-.25deg}to{translate:1% -6px;rotate:.25deg}}
 @media(max-width:700px){.world-cursor{display:none}.world-scroll-index{right:9px;bottom:16px}.world-experience:before{background:radial-gradient(260px circle at var(--cursor-x) var(--cursor-y),rgba(83,231,211,.05),transparent 70%)}}
 @media(prefers-reduced-motion:reduce){.world-vessel,.world-route-hero path,.journey-backdrop svg path{animation:none!important}.world-cursor{display:none!important}}
+
+.world-experience:before{background:radial-gradient(520px circle at calc(50vw + var(--world-x,0px)) calc(50vh + var(--world-y,0px)),rgba(83,231,211,.12),transparent 68%)}
+.world-cursor{left:calc(50vw + var(--world-x,0px));top:calc(50vh + var(--world-y,0px))}
