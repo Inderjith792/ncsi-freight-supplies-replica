@@ -175,6 +175,11 @@ export function ImmersiveWorld() {
           cable.position.set(x+dx,9.4,-15); cable.castShadow=true; port.add(cable);
         }
         box(port,[5.5,0.35,2.6],steel,[x+2.2,16.5,-15]);
+        for(const side of [-1,1]) {
+          const diagonal=new THREE.Mesh(new THREE.CylinderGeometry(0.075,0.075,18,6),steel);
+          diagonal.position.set(x+1.1,9.2,-15+side*0.82);
+          diagonal.rotation.z=side*Math.atan2(17,3.2); port.add(diagonal);
+        }
         box(port,[1.1,0.45,1.1],darkSteel,[x+2.2,16.1,-15]);
         for(let trolley=0;trolley<3;trolley++) {
           const hook = new THREE.Mesh(new THREE.CylinderGeometry(0.045,0.045,4.6,6),darkSteel);
@@ -204,6 +209,27 @@ export function ImmersiveWorld() {
         const container=box(ship,[3.6,1.45,2.05],palette[(row*2+col)%palette.length],[-7.5+col*2.05,1.65+row*1.5, row%2?0.65:-0.65],true);
         for(let rib=-5;rib<=5;rib++) box(container,[0.035,1.3,2.08],mat("#102b36",0.42,0.58),[rib*0.31,0,0]);
         box(container,[0.8,0.08,0.04],white,[-1.1,0.47,1.04]);
+      }
+      // Visible ship hardware: stern propeller, rudder, lifeboats and deck safety rails.
+      const propellerMat=mat("#b7c6c4",0.88,0.22);
+      const propellerHub=new THREE.Mesh(new THREE.CylinderGeometry(0.18,0.22,0.36,12),propellerMat);
+      propellerHub.rotation.x=Math.PI/2; propellerHub.position.set(-15.5,-0.7,0); ship.add(propellerHub);
+      for(let blade=0;blade<5;blade++) {
+        const propBlade=box(ship,[0.12,0.82,0.28],propellerMat,[-15.72,-0.7,0]);
+        propBlade.rotation.x=blade*Math.PI*2/5;
+      }
+      box(ship,[0.22,1.25,0.9],darkSteel,[15.15,-0.45,0]);
+      for(const side of [-1,1]) {
+        const lifeboat=new THREE.Mesh(new THREE.CapsuleGeometry(0.32,2.1,4,8),orange);
+        lifeboat.rotation.z=Math.PI/2; lifeboat.position.set(-10.7,3.25,side*2.48); ship.add(lifeboat);
+        for(let rail=0;rail<18;rail++) {
+          const stanchion=new THREE.Mesh(new THREE.CylinderGeometry(0.018,0.018,0.42,5),white);
+          stanchion.position.set(-12+rail*1.4,0.96,side*2.38); ship.add(stanchion);
+        }
+      }
+      for(let mark=0;mark<9;mark++) {
+        const deckMark=new THREE.Mesh(new THREE.BoxGeometry(0.75,0.018,0.06),mat("#d5e2dc",0.2,0.7));
+        deckMark.position.set(-8+mark*1.9,0.715,2.02); ship.add(deckMark);
       }
       // Aircraft: fuselage, tapered nose, swept wings, tailplanes, engine nacelles.
       const aircraft = groupAt(18, 17, -30);
