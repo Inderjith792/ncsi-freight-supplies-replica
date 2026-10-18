@@ -31,7 +31,7 @@ export function ImmersiveWorld() {
       const scene = new THREE.Scene();
       scene.background = new THREE.Color("#071a22");
       const camera = new THREE.PerspectiveCamera(52, 1, 0.1, 2000);
-      camera.position.set(0, 24, 112);
+      camera.position.set(0, 0, 18);
       renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: "high-performance" });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, window.innerWidth < 760 ? 1.25 : 1.6));
       renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -48,7 +48,7 @@ export function ImmersiveWorld() {
       const loader = await import("three/examples/jsm/loaders/GLTFLoader.js");
       const gltfLoader = new loader.GLTFLoader();
       gltfLoader.load(
-        "/models/animated_ocean_scene.glb",
+        "/models/alien_space_nebula_1_skybox.glb",
         (gltf) => {
           if (disposed) {
             gltf.scene.traverse((o) => {
@@ -60,8 +60,8 @@ export function ImmersiveWorld() {
           const model = gltf.scene;
           // Oceanic colour grade: shift the nebula's existing colours toward deep-sea blue,
           // cyan and teal while preserving its texture maps and overall luminosity.
-          const oceanTint = new THREE.Color("#b9e7dc");
-          const deepOcean = new THREE.Color("#176b70");
+          const oceanTint = new THREE.Color("#4d8b94");
+          const deepOcean = new THREE.Color("#0c5964");
           model.traverse((object) => {
             const mesh = object as import("three").Mesh;
             if (!mesh.isMesh) return;
@@ -79,10 +79,10 @@ export function ImmersiveWorld() {
               m.depthWrite = false;
               // The source texture is strongly purple/white, so a subtle tint was nearly invisible.
               // Apply a decisive ocean-blue multiply to the texture while retaining its detail.
-              if (m.color) m.color.lerp(oceanTint, 0.12);
+              if (m.color) m.color.lerp(oceanTint, 0.28);
               if (m.emissive) {
-                m.emissive.lerp(deepOcean, 0.12);
-                m.emissiveIntensity = Math.max(m.emissiveIntensity ?? 0, 0.08);
+                m.emissive.lerp(deepOcean, 0.18);
+                m.emissiveIntensity = Math.max(m.emissiveIntensity ?? 0, 0.12);
               }
               m.needsUpdate = true;
             });
@@ -92,19 +92,19 @@ export function ImmersiveWorld() {
           const size = bounds.getSize(new THREE.Vector3());
           const largest = Math.max(size.x, size.y, size.z);
           model.position.sub(center);
-          if (largest > 0) model.scale.setScalar(180 / largest);
+          if (largest > 0) model.scale.setScalar(260 / largest);
           // Ocean scenes are commonly authored as horizontal planes; tilt the camera down
           // from a useful distance so the water surface and scene details fill the frame.
-          model.rotation.x = -0.12;
+          model.rotation.x = 0;
           world.add(model);
-          console.info("NCSI ocean environment loaded.");
+          console.info("NCSI nebula environment loaded.");
         },
         undefined,
-        (error) => console.error("Could not load /models/animated_ocean_scene.glb", error)
+        (error) => console.error("Could not load /models/alien_space_nebula_1_skybox.glb", error)
       );
 
       // Fine stars provide depth while the supplied nebula model rotates behind the content.
-      const count = 850;
+      const count = 1200;
       const points = new Float32Array(count * 3);
       for (let i = 0; i < count; i++) {
         const radius = 150 + Math.random() * 550;
@@ -116,7 +116,7 @@ export function ImmersiveWorld() {
       }
       const starGeometry = new THREE.BufferGeometry();
       starGeometry.setAttribute("position", new THREE.BufferAttribute(points, 3));
-      const stars = new THREE.Points(starGeometry, new THREE.PointsMaterial({ color: 0x9be4d4, size: 0.55, transparent: true, opacity: 0.22, depthWrite: false }));
+      const stars = new THREE.Points(starGeometry, new THREE.PointsMaterial({ color: 0x9be4d4, size: 0.65, transparent: true, opacity: 0.38, depthWrite: false }));
       scene.add(stars);
 
       const resize = () => {
@@ -125,7 +125,7 @@ export function ImmersiveWorld() {
         const height = canvas.clientHeight || window.innerHeight;
         renderer.setSize(width, height, false);
         camera.aspect = width / height;
-        camera.fov = width < 760 ? 70 : 58;
+        camera.fov = width < 760 ? 62 : 52;
         camera.updateProjectionMatrix();
       };
       resize();
@@ -134,14 +134,14 @@ export function ImmersiveWorld() {
       const animate = (now: number) => {
         if (disposed) return;
         const t = (now - start) / 1000;
-        // Slow yaw and gentle roll reveal different parts of the ocean environment without distracting from the copy.
+        // Slow yaw and gentle roll reveal different regions of the nebula, graded toward NCSI teal.
         const scrollProgress = Number(document.documentElement.style.getPropertyValue("--journey-progress")) || 0;
         world.rotation.y = t * 0.035 + scrollProgress * Math.PI * 0.32;
         world.rotation.x = Math.sin(t * 0.11) * 0.035;
         world.rotation.z = Math.sin(t * 0.07) * 0.018;
         stars.rotation.y = -t * 0.003;
         camera.position.x += ((window.innerWidth < 760 ? 0 : 1.2) - camera.position.x) * 0.012;
-        camera.position.y += (window.innerWidth < 760 ? 10 : 24 - camera.position.y) * 0.012;
+        camera.position.y += (0 - camera.position.y) * 0.012;
         camera.lookAt(0, 0, 0);
         renderer?.render(scene, camera);
         frame = window.requestAnimationFrame(animate);
@@ -199,7 +199,7 @@ export function ImmersiveWorld() {
   const stage = stages[active];
   return (
     <main className="ncsi-journey" style={{ "--progress": progress, "--phase": active } as React.CSSProperties}>
-      <canvas ref={canvasRef} className="journey-webgl" aria-label="Ocean environment with NCSI mint and teal lighting" />
+      <canvas ref={canvasRef} className="journey-webgl" aria-label="Rotating nebula tinted with NCSI teal palette" />
       <div className="journey-runway" aria-hidden="true">{stages.map((item) => <div key={item.id} id={"runway-" + item.id} />)}</div>
       <div className={"journey-stage mode-" + stage.id}>
         <div className="journey-vignette" />
