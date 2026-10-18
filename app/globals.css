@@ -507,3 +507,23 @@ html{scroll-behavior:smooth;scroll-padding-top:0}body{background:var(--world-bg)
  .ncsi-journey .journey-copy>p{max-width:94%!important;font-size:12px!important}
 }
 @media(prefers-reduced-motion:reduce){.ncsi-journey *{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+
+/* Pastel-only NCSI art direction: seafoam, pale aqua, and soft teal; no near-black overlays. */
+.ncsi-journey{background:#e5f4f1!important;color:#315e63!important}
+.ncsi-journey .journey-stage .journey-vignette{background:linear-gradient(90deg,rgba(220,242,237,.66) 0%,rgba(220,242,237,.35) 34%,rgba(220,242,237,.06) 72%),linear-gradient(0deg,rgba(204,235,229,.34) 0%,transparent 28%,transparent 78%,rgba(224,244,240,.18) 100%)!important}
+.ncsi-journey .journey-copy h1{color:#315e63!important}
+.ncsi-journey .journey-copy h1 em{color:#83c9bd!important}
+.ncsi-journey .journey-copy>p{color:#456f73!important}
+.ncsi-journey .journey-live,.ncsi-journey .journey-eyebrow,.ncsi-journey .journey-counter,.ncsi-journey .journey-stat{color:#456f73!important}
+.ncsi-journey .journey-nav,.ncsi-journey .journey-logo,.ncsi-journey .journey-menu-trigger{color:#315e63!important}
+.ncsi-journey .journey-menu-trigger{border-color:rgba(92,157,154,.45)!important;background:rgba(230,247,243,.55)!important}
+.ncsi-journey .journey-cta{background:#b8e4da!important;color:#315e63!important;border:1px solid rgba(102,174,164,.5)!important}
+.ncsi-journey .journey-footer{color:#456f73!important}
+.ncsi-journey .journey-footer .journey-progress{background:rgba(111,174,168,.24)!important}
+.ncsi-journey .journey-footer .journey-progress i{background:#83c9bd!important}
+.ncsi-journey .journey-rail button{color:#456f73!important}
+.ncsi-journey .journey-rail button i{background:#a9dcd4!important}
+.ncsi-journey .journey-inquiry{background:#e5f4f1!important;color:#315e63!important}
+.ncsi-journey .journey-inquiry p{color:#456f73!important}
+@media(max-width:760px){.ncsi-journey .journey-stage .journey-vignette{background:linear-gradient(0deg,rgba(218,241,236,.76) 0%,rgba(218,241,236,.38) 42%,rgba(218,241,236,.08) 100%)!important}}
