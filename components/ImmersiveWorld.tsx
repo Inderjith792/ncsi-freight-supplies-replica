@@ -432,6 +432,26 @@ export function ImmersiveWorld() {
   return <main className="ncsi-journey" style={{ "--progress": progress, "--phase": active } as React.CSSProperties}>
     <canvas ref={canvasRef} className="journey-webgl" aria-label="Interactive 3D freight world with cargo ship, aircraft, port and train" />
     <div className={"journey-photo-scene photo-" + scene.id} key={"photo-" + scene.id} aria-hidden="true" />
+    <div className={"journey-project-field project-" + scene.id} key={"field-" + scene.id} aria-hidden="true">
+      <div className="project-orbit project-orbit-a" />
+      <div className="project-orbit project-orbit-b" />
+      <div className="project-card project-card-main">
+        <div className="project-card-image" />
+        <div className="project-card-meta"><span>NCSI / FIELD NOTES</span><b>{scene.no} — 05</b></div>
+        <div className="project-card-title">{scene.stat}</div>
+        <div className="project-card-caption">{scene.label}</div>
+      </div>
+      <div className="project-card project-card-side project-card-left">
+        <div className="project-card-image" />
+        <span>ORIGIN / 01</span>
+      </div>
+      <div className="project-card project-card-side project-card-right">
+        <div className="project-card-image" />
+        <span>GLOBAL NETWORK / 02</span>
+      </div>
+      <div className="project-card project-card-mini"><i/><span>LIVE ROUTE</span><b>CONNECTED</b></div>
+      <div className="project-coordinate">NCSI — {scene.no}<br/>ASSET INTEGRITY / PREDICTABLE TRANSIT</div>
+    </div>
     <div className="journey-runway" aria-hidden="true">{scenes.map((s) => <div key={s.id} id={"runway-" + s.id} />)}</div>
     <div className={"journey-stage mode-" + scene.mode}>
       <div className="journey-vignette"/>
