@@ -431,6 +431,7 @@ export function ImmersiveWorld() {
 
   return <main className="ncsi-journey" style={{ "--progress": progress, "--phase": active } as React.CSSProperties}>
     <canvas ref={canvasRef} className="journey-webgl" aria-label="Interactive 3D freight world with cargo ship, aircraft, port and train" />
+    <div className={"journey-photo-scene photo-" + scene.id} key={"photo-" + scene.id} aria-hidden="true" />
     <div className="journey-runway" aria-hidden="true">{scenes.map((s) => <div key={s.id} id={"runway-" + s.id} />)}</div>
     <div className={"journey-stage mode-" + scene.mode}>
       <div className="journey-vignette"/>
