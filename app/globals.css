@@ -252,3 +252,15 @@ html{scroll-behavior:smooth;scroll-padding-top:0}body{background:var(--world-bg)
 .journey-end{z-index:5;position:relative;background:#061824}
 @media(max-width:700px){.journey-vignette{background:linear-gradient(90deg,rgba(3,15,23,.78),rgba(3,15,23,.25)),linear-gradient(0deg,rgba(3,15,23,.55),transparent 55%)}}
 @media(prefers-reduced-motion:reduce){.journey-webgl{opacity:.9}}
+
+
+/* WebGL visibility fix: keep the canvas above the stage background, below UI */
+.journey-webgl{z-index:2!important;pointer-events:none}
+.journey-stage{z-index:3!important;background:transparent!important}
+.journey-stage:before{display:none!important}
+.journey-stage .journey-vignette{z-index:1}
+.journey-nav,.journey-copy,.journey-rail,.journey-footer,.journey-menu,.journey-inquiry-backdrop{position:relative;z-index:4}
+.journey-nav{position:absolute}
+.journey-rail,.journey-footer{position:fixed}
+.journey-menu{position:absolute}
+.journey-inquiry-backdrop{position:fixed}
