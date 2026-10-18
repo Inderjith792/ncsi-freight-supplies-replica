@@ -264,3 +264,26 @@ html{scroll-behavior:smooth;scroll-padding-top:0}body{background:var(--world-bg)
 .journey-rail,.journey-footer{position:fixed}
 .journey-menu{position:absolute}
 .journey-inquiry-backdrop{position:fixed}
+
+
+/* ACTIVE-THEORY-INSPIRED MOTION SYSTEM — response, depth and quiet restraint */
+:root{--cursor-x:50vw;--cursor-y:50vh}
+.journey-cursor{left:var(--cursor-x)!important;top:var(--cursor-y)!important;transition:width .22s ease,height .22s ease,border-color .22s ease;will-change:left,top}
+.journey-cursor:before{content:"";position:absolute;inset:7px;border:1px solid #c7ffed3b;border-radius:50%}
+.journey-cursor i{box-shadow:0 0 16px #9ffff0}
+.journey-webgl{filter:saturate(.88) contrast(1.04)}
+.journey-vignette{background:radial-gradient(ellipse at 67% 48%,transparent 0%,rgba(3,12,18,.08) 32%,rgba(3,12,18,.36) 100%),linear-gradient(90deg,rgba(3,15,23,.88) 0%,rgba(3,15,23,.58) 31%,rgba(3,15,23,.08) 76%,rgba(3,15,23,.2) 100%),linear-gradient(0deg,rgba(3,15,23,.64),transparent 29%,rgba(3,15,23,.12) 76%,rgba(3,15,23,.34))}
+.journey-copy{transition:opacity .45s ease,filter .45s ease;filter:drop-shadow(0 10px 34px #020c1280)}
+.journey-copy h1{font-weight:500;text-shadow:0 2px 32px #020c1255}
+.journey-eyebrow{display:flex;align-items:center;gap:2px}
+.journey-rail button i{position:relative;overflow:hidden}
+.journey-rail button.is-active i:after{content:"";position:absolute;inset:0;background:#e0fff4;transform-origin:left;animation:rail-scan 1.2s ease both}
+@keyframes rail-scan{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.journey-menu{box-shadow:0 24px 90px #0006}
+.journey-menu button{transition:padding .25s ease,color .25s ease}
+.journey-menu button:hover{padding-left:18px;color:#9ef0dd}
+.journey-cta{box-shadow:0 8px 28px #0002}
+.journey-cta:hover{transform:translateY(-2px)}
+.journey-footer{backdrop-filter:blur(2px)}
+@media(max-width:760px){.journey-cursor{display:none}.journey-vignette{background:linear-gradient(90deg,rgba(3,15,23,.86),rgba(3,15,23,.28)),linear-gradient(0deg,rgba(3,15,23,.64),transparent 55%)}}
+@media(prefers-reduced-motion:reduce){.journey-cursor{display:none}.journey-rail button.is-active i:after{animation:none}}
