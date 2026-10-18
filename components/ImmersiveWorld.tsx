@@ -64,7 +64,7 @@ export function ImmersiveWorld() {
         <svg className="world-route-hero" viewBox="0 0 1000 500" preserveAspectRatio="none"><path d="M50 390 C230 130 330 120 500 250 S780 420 950 90"/><path d="M50 390 C230 130 330 120 500 250 S780 420 950 90" className="route-hot"/><circle r="5"><animateMotion dur="9s" repeatCount="indefinite" path="M50 390 C230 130 330 120 500 250 S780 420 950 90"/></circle></svg>
       </div>
       <div className="world-grain" aria-hidden="true"/>
-      <div className="world-coord world-coord-left">22° 18' N<br/>88° 22' E<br/><span>PORT SYSTEM / 001</span></div>
+      <div className="world-coord world-coord-left">22° 18&apos; N<br/>88° 22&apos; E<br/><span>PORT SYSTEM / 001</span></div>
       <div className="world-coord world-coord-right">NCSI NETWORK<br/><span>ASSET INTEGRITY<br/>PREDICTABLE TRANSIT</span></div>
       <div className="world-opening-copy">
         <p className="world-overline"><span/> TRUSTED GLOBAL LOGISTICS PARTNER <span className="overline-rule"/></p>
@@ -110,7 +110,7 @@ export function ImmersiveWorld() {
 
     <section id="contact-world" className="world-contact">
       <div className="contact-world-backdrop" aria-hidden="true"><div className="contact-orbit orbit-one"/><div className="contact-orbit orbit-two"/><div className="contact-orbit orbit-three"/><span>NCSI / NETWORK COMPLETE</span></div>
-      <div className="contact-world-intro"><p className="world-overline"><span/> YOUR MOVE / START HERE</p><h2>Where do you<br/><em>need to go?</em></h2><p>Tell us what you need to lease or move. We'll help you work through the next step.</p><div className="contact-direct"><a href="mailto:info@ncsifreightsupplies.com">INFO@NCSIFREIGHTSUPPLIES.COM ↗</a><a href="tel:+918248084706">+91 82480 84706</a></div></div>
+      <div className="contact-world-intro"><p className="world-overline"><span/> YOUR MOVE / START HERE</p><h2>Where do you<br/><em>need to go?</em></h2><p>Tell us what you need to lease or move. We&apos;ll help you work through the next step.</p><div className="contact-direct"><a href="mailto:info@ncsifreightsupplies.com">INFO@NCSIFREIGHTSUPPLIES.COM ↗</a><a href="tel:+918248084706">+91 82480 84706</a></div></div>
       <div className="contact-world-form"><div className="form-world-heading"><span>INQUIRY / 001</span><h3>Start a conversation.</h3><p>Share the details. We’ll take it from here.</p></div><LeadForm kind="quote" buttonLabel="Send inquiry ↗"/></div>
       <footer className="world-footer"><a className="world-brand" href="#top"><span className="world-brand-mark">N</span><span><b>NCSI</b><small>FREIGHT SUPPLIES</small></span></a><span>ASSET INTEGRITY. PREDICTABLE TRANSIT.</span><span>© 2026 NCSI FREIGHT SUPPLIES</span></footer>
     </section>
