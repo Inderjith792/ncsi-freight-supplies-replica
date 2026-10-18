@@ -484,3 +484,26 @@ html{scroll-behavior:smooth;scroll-padding-top:0}body{background:var(--world-bg)
  .ncsi-journey .journey-footer{left:7vw!important;right:7vw!important}
 }
 @media(prefers-reduced-motion:reduce){.ncsi-journey .project-card-main,.ncsi-journey .project-card-image{animation:none!important}}
+
+
+/* Final integrated scene: the native Three.js freight world is the hero, not stock-photo overlays. */
+.ncsi-journey{position:relative!important;min-height:100svh;background:#061824!important;color:#f4f3ec!important;isolation:isolate;overflow:clip}
+.ncsi-journey .journey-webgl{display:block!important;visibility:visible!important;opacity:1!important;position:fixed!important;inset:0!important;width:100vw!important;height:100svh!important;z-index:0!important;pointer-events:none!important;outline:0}
+.ncsi-journey .journey-photo-scene,.ncsi-journey .journey-project-field{display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important}
+.ncsi-journey .journey-runway{position:relative!important;z-index:-1!important;pointer-events:none!important}
+.ncsi-journey .journey-stage{position:fixed!important;inset:0!important;z-index:5!important;background:transparent!important;pointer-events:none!important}
+.ncsi-journey .journey-stage button,.ncsi-journey .journey-stage a,.ncsi-journey .journey-stage header,.ncsi-journey .journey-stage nav,.ncsi-journey .journey-stage .journey-copy,.ncsi-journey .journey-stage .journey-footer,.ncsi-journey .journey-stage .journey-rail,.ncsi-journey .journey-stage .journey-inquiry-backdrop{pointer-events:auto}
+.ncsi-journey .journey-stage .journey-vignette{position:absolute!important;inset:0!important;z-index:1!important;pointer-events:none!important;background:linear-gradient(90deg,rgba(3,13,20,.76) 0%,rgba(3,13,20,.36) 34%,rgba(3,13,20,.03) 72%),linear-gradient(0deg,rgba(3,13,20,.62) 0%,transparent 23%,transparent 76%,rgba(3,13,20,.26) 100%)!important}
+.ncsi-journey .journey-nav,.ncsi-journey .journey-rail,.ncsi-journey .journey-footer{z-index:20!important}
+.ncsi-journey .journey-copy{z-index:8!important}
+.ncsi-journey .journey-copy h1{font-size:clamp(46px,5.8vw,84px)!important;line-height:.92!important;letter-spacing:-.075em!important;text-wrap:balance}
+.ncsi-journey .journey-copy>p{max-width:370px!important;font-size:13px!important;line-height:1.8!important;color:rgba(241,244,237,.76)!important}
+.ncsi-journey .journey-cursor{z-index:21!important}
+.ncsi-journey .journey-end{position:relative;z-index:6}
+@media(max-width:760px){
+ .ncsi-journey .journey-webgl{width:100vw!important;height:100svh!important}
+ .ncsi-journey .journey-stage .journey-vignette{background:linear-gradient(0deg,rgba(3,13,20,.9) 0%,rgba(3,13,20,.55) 38%,rgba(3,13,20,.08) 78%,rgba(3,13,20,.32) 100%)!important}
+ .ncsi-journey .journey-copy h1{font-size:clamp(40px,10vw,62px)!important}
+ .ncsi-journey .journey-copy>p{max-width:94%!important;font-size:12px!important}
+}
+@media(prefers-reduced-motion:reduce){.ncsi-journey *{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
