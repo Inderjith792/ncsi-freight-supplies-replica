@@ -14,7 +14,7 @@ const scenes = [
 export function ImmersiveWorld() {
   const [progress, setProgress] = useState(0);
   const [active, setActive] = useState(0);
-  const [pointer, setPointer] = useState({ x: 0, y: 0 });
+  const [pointer, setPointer] = useState({ x: 0, y: 0, mx: 0, my: 0 });
   const [menu, setMenu] = useState(false);
   const [inquiry, setInquiry] = useState(false);
 
@@ -23,8 +23,10 @@ export function ImmersiveWorld() {
     const update = () => {
       if (raf) return;
       raf = window.requestAnimationFrame(() => {
-        const max = document.documentElement.scrollHeight - window.innerHeight;
-        const p = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+        const runway = document.querySelector<HTMLElement>(".journey-runway");
+        const runwayTop = runway ? runway.getBoundingClientRect().top + window.scrollY : 0;
+        const runwayDistance = Math.max(1, (runway?.offsetHeight ?? window.innerHeight * scenes.length) - window.innerHeight);
+        const p = Math.min(1, Math.max(0, (window.scrollY - runwayTop) / runwayDistance));
         setProgress(p);
         setActive(Math.min(scenes.length - 1, Math.floor(p * scenes.length)));
         document.documentElement.style.setProperty("--journey-progress", String(p));
@@ -43,12 +45,33 @@ export function ImmersiveWorld() {
 
   function onPointer(e: React.PointerEvent<HTMLElement>) {
     if (e.pointerType === "touch" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    setPointer({ x: e.clientX - window.innerWidth / 2, y: e.clientY - window.innerHeight / 2 });
+    const x = e.clientX - window.innerWidth / 2;
+    const y = e.clientY - window.innerHeight / 2;
+    setPointer({ x, y, mx: Math.max(-18, Math.min(18, x * 0.025)), my: Math.max(-12, Math.min(12, y * 0.025)) });
+  }
+
+  useEffect(() => {
+    if (!menu && !inquiry) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setMenu(false);
+        setInquiry(false);
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [menu, inquiry]);
+
+  function scrollToStage(index: number) {
+    const runway = document.querySelector<HTMLElement>(".journey-runway");
+    const runwayTop = runway ? runway.getBoundingClientRect().top + window.scrollY : 0;
+    const target = runwayTop + Math.min(scenes.length - 1, Math.max(0, index)) * window.innerHeight;
+    window.scrollTo({ top: target, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
   }
 
   const scene = scenes[active];
 
-  return <main className="ncsi-journey" onPointerMove={onPointer} style={{ "--px": pointer.x + "px", "--py": pointer.y + "px", "--progress": progress, "--phase": active } as React.CSSProperties}>
+  return <main className="ncsi-journey" onPointerMove={onPointer} style={{ "--px": pointer.x + "px", "--py": pointer.y + "px", "--mx": pointer.mx + "px", "--my": pointer.my + "px", "--progress": progress, "--phase": active } as React.CSSProperties}>
     <div className="journey-runway" aria-hidden="true">{scenes.map((s) => <div key={s.id} id={"runway-" + s.id} />)}</div>
     <div className={"journey-stage mode-" + scene.mode}>
       <div className="journey-sky"><div className="sky-glow"/><div className="sky-sun"/><div className="sky-cloud cloud-one"/><div className="sky-cloud cloud-two"/></div>
@@ -72,19 +95,19 @@ export function ImmersiveWorld() {
         <div className="journey-live"><i/> FREIGHT IS NEVER STILL</div>
         <button className="journey-menu-trigger" onClick={() => setMenu(!menu)}>{menu ? "CLOSE −" : "EXPLORE +"}</button>
       </header>
-      {menu && <nav className="journey-menu">{scenes.map((s,i)=><button key={s.id} onClick={()=>{window.scrollTo({top:document.documentElement.scrollHeight * i / scenes.length,behavior:"smooth"});setMenu(false)}}><span>{s.no}</span>{s.label}</button>)}<button onClick={()=>{setInquiry(true);setMenu(false)}}><span>↗</span>START A SHIPMENT</button></nav>}
+      {menu && <nav className="journey-menu">{scenes.map((s,i)=><button key={s.id} onClick={()=>{scrollToStage(i);setMenu(false)}}><span>{s.no}</span>{s.label}</button>)}<button onClick={()=>{setInquiry(true);setMenu(false)}}><span>↗</span>START A SHIPMENT</button></nav>}
       <div className="journey-copy" key={scene.id}>
         <div className="journey-eyebrow"><i/>{scene.eyebrow}</div>
         <div className="journey-counter">{scene.no}<span>/</span>0{scenes.length}</div>
         <h1>{scene.title}</h1>
         <p>{scene.copy}</p>
         <div className="journey-stat"><b>{scene.stat}</b><span>{scene.label}</span></div>
-        <button className="journey-cta" onClick={()=>{if(active<scenes.length-1)window.scrollTo({top:document.documentElement.scrollHeight*(active+1)/scenes.length,behavior:"smooth"});else setInquiry(true)}}>{active===scenes.length-1?"START YOUR SHIPMENT":"TRAVEL FURTHER"} <span>↘</span></button>
+        <button className="journey-cta" onClick={()=>{if(active<scenes.length-1)scrollToStage(active + 1);else setInquiry(true)}}>{active===scenes.length-1?"START YOUR SHIPMENT":"TRAVEL FURTHER"} <span>↘</span></button>
       </div>
-      <div className="journey-rail">{scenes.map((s,i)=><button key={s.id} aria-label={"Go to " + s.label} className={i===active?"is-active":""} onClick={()=>window.scrollTo({top:document.documentElement.scrollHeight*i/scenes.length,behavior:"smooth"})}><span>{s.no}</span><i/></button>)}</div>
+      <div className="journey-rail">{scenes.map((s,i)=><button key={s.id} aria-label={"Go to " + s.label} className={i===active?"is-active":""} onClick={()=>scrollToStage(i)}><span>{s.no}</span><i/></button>)}</div>
       <div className="journey-footer"><span>SCROLL TO MOVE THROUGH THE WORLD <b>↓</b></span><div className="journey-progress"><i style={{transform:"scaleX("+progress+")"}}/></div><b>{String(Math.round(progress*100)).padStart(2,"0")}%</b></div>
       <div className="journey-cursor" aria-hidden="true"><i/></div>
-      {inquiry && <div className="journey-inquiry-backdrop" role="dialog" aria-modal="true" aria-label="Start a shipment inquiry"><div className="journey-inquiry"><button className="inquiry-close" onClick={()=>setInquiry(false)} aria-label="Close inquiry">×</button><div className="journey-eyebrow"><i/> YOUR NEXT MOVE</div><h2>Let's move<br/><em>something forward.</em></h2><p>Tell us what you need to lease or move.</p><LeadForm kind="quote" buttonLabel="Send inquiry ↗"/></div></div>}
+      {inquiry && <div className="journey-inquiry-backdrop" role="dialog" aria-modal="true" aria-label="Start a shipment inquiry"><div className="journey-inquiry"><button className="inquiry-close" onClick={()=>setInquiry(false)} aria-label="Close inquiry">×</button><div className="journey-eyebrow"><i/> YOUR NEXT MOVE</div><h2>Let&apos;s move<br/><em>something forward.</em></h2><p>Tell us what you need to lease or move.</p><LeadForm kind="quote" buttonLabel="Send inquiry ↗"/></div></div>}
     </div>
     <div className="journey-end" aria-hidden="true"><span>YOU ARE HERE.</span><b>NCSI FREIGHT SUPPLIES</b><span>THE WORLD KEEPS MOVING.</span></div>
   </main>;
