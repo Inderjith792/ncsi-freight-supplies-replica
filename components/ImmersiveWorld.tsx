@@ -17,7 +17,7 @@ export function ImmersiveWorld() {
   const [active, setActive] = useState(0);
   const [menu, setMenu] = useState(false);
   const [inquiry, setInquiry] = useState(false);
-  const pointerRef = useRef({ x: 0, y: 0, angle: 0 });
+  const pointerRef = useRef({ x: -100, y: -100, angle: 0 });
   const cursorRef = useRef<HTMLDivElement>(null);
 
   function handlePointerMove(event: React.PointerEvent<HTMLElement>) {
@@ -215,7 +215,7 @@ export function ImmersiveWorld() {
 
   const stage = stages[active];
   return (
-    <main className="ncsi-journey" onPointerMove={handlePointerMove} style={{ "--progress": progress, "--phase": active } as React.CSSProperties}>
+    <main className="ncsi-journey" onPointerMove={handlePointerMove} onMouseMove={handlePointerMove} style={{ "--progress": progress, "--phase": active } as React.CSSProperties}>
       <canvas ref={canvasRef} className="journey-webgl" aria-label="Rotating nebula tinted with NCSI teal palette" />
       <div className="journey-runway" aria-hidden="true">{stages.map((item) => <div key={item.id} id={"runway-" + item.id} />)}</div>
       <div className={"journey-stage mode-" + stage.id}>
