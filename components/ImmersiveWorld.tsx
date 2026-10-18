@@ -19,25 +19,28 @@ export function ImmersiveWorld() {
   const [inquiry, setInquiry] = useState(false);
   const pointerRef = useRef({ x: -100, y: -100, angle: 0 });
   const cursorRef = useRef<HTMLDivElement>(null);
-  const handlePointerMoveRef = useRef<(event: PointerEvent) => void>(() => {});
-  handlePointerMoveRef.current = (event: PointerEvent) => {
-    const p = pointerRef.current;
-    const dx = event.clientX - p.x;
-    const dy = event.clientY - p.y;
-    if (Math.abs(dx) + Math.abs(dy) > 1) p.angle = Math.atan2(dy, dx) * (180 / Math.PI);
-    p.x = event.clientX;
-    p.y = event.clientY;
-    const cursor = cursorRef.current;
-    if (cursor) {
-      cursor.style.left = `${event.clientX}px`;
-      cursor.style.top = `${event.clientY}px`;
-      cursor.style.setProperty("--cursor-angle", `${p.angle}deg`);
-    }
-  };
 
-  function handlePointerMove(event: React.PointerEvent<HTMLElement>) {
-    handlePointerMoveRef.current(event.nativeEvent);
-  }
+  useEffect(() => {
+    const move = (event: PointerEvent | MouseEvent) => {
+      const cursor = cursorRef.current;
+      if (!cursor) return;
+      const p = pointerRef.current;
+      const dx = event.clientX - p.x;
+      const dy = event.clientY - p.y;
+      if (Math.abs(dx) + Math.abs(dy) > 1) p.angle = Math.atan2(dy, dx) * (180 / Math.PI);
+      p.x = event.clientX;
+      p.y = event.clientY;
+      cursor.style.setProperty("left", event.clientX + "px", "important");
+      cursor.style.setProperty("top", event.clientY + "px", "important");
+      cursor.style.setProperty("--cursor-angle", p.angle + "deg");
+    };
+    window.addEventListener("pointermove", move, true);
+    window.addEventListener("mousemove", move, true);
+    return () => {
+      window.removeEventListener("pointermove", move, true);
+      window.removeEventListener("mousemove", move, true);
+    };
+  }, []);
 
   useEffect(() => {
     let disposed = false;
@@ -222,7 +225,7 @@ export function ImmersiveWorld() {
 
   const stage = stages[active];
   return (
-    <main className="ncsi-journey" onPointerMove={handlePointerMove} onMouseMove={handlePointerMove} style={{ "--progress": progress, "--phase": active } as React.CSSProperties}>
+    <main className="ncsi-journey" style={{ "--progress": progress, "--phase": active } as React.CSSProperties}>
       <canvas ref={canvasRef} className="journey-webgl" aria-label="Rotating nebula tinted with NCSI teal palette" />
       <div className="journey-runway" aria-hidden="true">{stages.map((item) => <div key={item.id} id={"runway-" + item.id} />)}</div>
       <div className={"journey-stage mode-" + stage.id}>
