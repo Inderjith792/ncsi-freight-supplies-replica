@@ -275,7 +275,7 @@ export function ImmersiveWorld() {
                 object.receiveShadow = true;
                 const materials = Array.isArray(object.material) ? object.material : [object.material];
                 materials.forEach((material) => {
-                  if ("envMapIntensity" in material) (material as THREE.MeshStandardMaterial).envMapIntensity = 1.15;
+                  if ("envMapIntensity" in material) (material as import("three").MeshStandardMaterial).envMapIntensity = 1.15;
                 });
               }
             });
