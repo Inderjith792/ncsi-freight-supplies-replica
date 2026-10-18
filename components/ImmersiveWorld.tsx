@@ -398,6 +398,27 @@ export function ImmersiveWorld() {
 
   useEffect(() => {
     let raf = 0;
+    let px = 0, py = 0, tx = 0, ty = 0;
+    let frame = 0;
+    const move = (event: PointerEvent) => {
+      tx = (event.clientX / Math.max(1, window.innerWidth) - 0.5) * 2;
+      ty = (event.clientY / Math.max(1, window.innerHeight) - 0.5) * 2;
+      if (frame) return;
+      const tick = () => {
+        px += (tx - px) * 0.08; py += (ty - py) * 0.08;
+        document.documentElement.style.setProperty("--world-mx", px.toFixed(4));
+        document.documentElement.style.setProperty("--world-my", py.toFixed(4));
+        if (Math.abs(tx-px) + Math.abs(ty-py) > 0.002) frame = window.requestAnimationFrame(tick);
+        else frame = 0;
+      };
+      frame = window.requestAnimationFrame(tick);
+    };
+    window.addEventListener("pointermove", move, {passive:true});
+    return () => { window.removeEventListener("pointermove", move); if(frame) window.cancelAnimationFrame(frame); };
+  }, []);
+
+  useEffect(() => {
+    let raf = 0;
     const update = () => {
       if (raf) return;
       raf = window.requestAnimationFrame(() => {
