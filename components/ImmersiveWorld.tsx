@@ -240,7 +240,7 @@ export function ImmersiveWorld() {
     update();
     window.addEventListener("scroll", update, { passive: true });
     window.addEventListener("resize", update);
-    return () => { if (raf) window.cancelAnimationFrame(raf); window.removeEventListener("scroll", update); window.removeEventListener("resize", update); window.removeEventListener("pointermove", move); window.removeEventListener("mousemove", move); };
+    return () => { if (raf) window.cancelAnimationFrame(raf); window.removeEventListener("scroll", update); window.removeEventListener("resize", update); };
   }, []);
 
   useEffect(() => {
