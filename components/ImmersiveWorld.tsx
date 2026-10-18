@@ -19,8 +19,10 @@ export function ImmersiveWorld() {
     const update = () => {
       const max = document.documentElement.scrollHeight - window.innerHeight;
       const p = max > 0 ? window.scrollY / max : 0;
+      document.documentElement.style.setProperty("--world-scroll", String(p));
+      document.documentElement.style.setProperty("--world-scroll-y", String(window.scrollY));
       setProgress(p);
-      setActive(p < .34 ? 0 : p < .69 ? 1 : 2);
+      setActive(p < .25 ? 0 : p < .62 ? 1 : 2);
     };
     update();
     window.addEventListener("scroll", update, { passive: true });
@@ -30,11 +32,10 @@ export function ImmersiveWorld() {
 
   function move(e: React.MouseEvent<HTMLElement>) {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const r = e.currentTarget.getBoundingClientRect();
-    setPointer({ x: ((e.clientX - r.left) / r.width - .5) * 14, y: ((e.clientY - r.top) / r.height - .5) * -10 });
+    setPointer({ x: (e.clientX / window.innerWidth - .5) * 36, y: (e.clientY / window.innerHeight - .5) * -28 });
   }
 
-  return <main className="world-experience" onMouseMove={move} style={{ "--world-x": pointer.x + "px", "--world-y": pointer.y + "px", "--scroll-progress": progress } as React.CSSProperties}>
+  return <main className="world-experience" onPointerMove={move} style={{ "--world-x": pointer.x + "px", "--world-y": pointer.y + "px", "--scroll-progress": progress } as React.CSSProperties}>
     <div className="world-progress"><span style={{ transform: `scaleX(${progress})` }} /></div>
     <header className="world-nav">
       <a className="world-brand" href="#top" aria-label="NCSI home"><span className="world-brand-mark">N</span><span><b>NCSI</b><small>FREIGHT SUPPLIES</small></span></a>
