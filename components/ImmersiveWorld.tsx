@@ -95,6 +95,17 @@ export function ImmersiveWorld() {
         box(port,[1.1,0.5,25],steel,[x,17.35,-15]);
         box(port,[0.4,9,0.4],steel,[x+3,12,-15]);
         box(port,[0.18,7,0.18],darkSteel,[x+3.1,10,-15]);
+        for (const dx of [0.2,1.5,2.7]) {
+          const cable = new THREE.Mesh(new THREE.CylinderGeometry(0.025,0.025,15,6),darkSteel);
+          cable.position.set(x+dx,9.4,-15); cable.castShadow=true; port.add(cable);
+        }
+        box(port,[5.5,0.35,2.6],steel,[x+2.2,16.5,-15]);
+        box(port,[1.1,0.45,1.1],darkSteel,[x+2.2,16.1,-15]);
+        for(let trolley=0;trolley<3;trolley++) {
+          const hook = new THREE.Mesh(new THREE.CylinderGeometry(0.045,0.045,4.6,6),darkSteel);
+          hook.position.set(x-1.6+trolley*1.6,13.7,-15); port.add(hook);
+          box(port,[1.25,0.14,2.1],steel,[x-1.6+trolley*1.6,11.3,-15]);
+        }
       }
       // Cargo ship with deep hull, deck, bridge and an individually modelled container manifest.
       const ship = groupAt(2, 0, 18); ship.scale.setScalar(0.78);
