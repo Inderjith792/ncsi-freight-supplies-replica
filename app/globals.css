@@ -51,3 +51,28 @@ html{scroll-behavior:smooth;scroll-padding-top:0}body{background:var(--world-bg)
 @keyframes route-draw{to{stroke-dashoffset:-400}}
 @media(max-width:700px){.world-cursor{display:none}.world-scroll-index{right:10px;bottom:16px}.world-experience:before{background:radial-gradient(260px circle at var(--cursor-x) var(--cursor-y),rgba(79,222,207,.06),transparent 70%)}}
 @media(prefers-reduced-motion:reduce){.world-vessel,.world-route-hero path,.journey-backdrop svg path{animation:none!important}.world-opening-art,.journey-backdrop,.chapter-visual{transition:none!important}}
+
+/* Continuous world movement: the scroll position drives the scene, not just the progress bar. */
+.world-experience{--world-scroll:0;--world-scroll-y:0;--cursor-x:50vw;--cursor-y:50vh;perspective:1200px;}
+.world-experience:before{content:"";position:fixed;inset:0;z-index:39;pointer-events:none;background:radial-gradient(520px circle at var(--cursor-x) var(--cursor-y),rgba(83,231,211,.12),transparent 68%);mix-blend-mode:screen;}
+.world-cursor{position:fixed;z-index:130;pointer-events:none;width:32px;height:32px;border:1px solid rgba(137,245,226,.85);border-radius:50%;transform:translate(-50%,-50%);transition:width .2s,height .2s,opacity .2s;mix-blend-mode:difference;}
+.world-cursor span{position:absolute;width:4px;height:4px;left:50%;top:50%;border-radius:50%;background:#dffff8;transform:translate(-50%,-50%);}
+.world-experience:has(a:hover) .world-cursor,.world-experience:has(button:hover) .world-cursor{width:52px;height:52px;background:#65e8d31c;}
+.world-scroll-index{position:fixed;z-index:125;right:22px;bottom:28px;display:flex;align-items:center;gap:10px;writing-mode:vertical-rl;color:#a9d4d0;font:9px monospace;letter-spacing:.16em;pointer-events:none;}
+.world-scroll-index b{font-size:12px;color:#f2fffc;}
+.world-scroll-index i{width:1px;height:48px;display:block;background:#78cfc455;transform-origin:top;}
+.world-opening-art{will-change:transform;transform:translate3d(calc(var(--wx)*.5),calc(var(--wy)*.5),0) scale(calc(1.02 + var(--world-scroll)*.12));}
+.world-opening-copy{will-change:transform;transform:translate3d(calc(var(--wx)*-.12),calc(var(--wy)*-.12),0);}
+.world-moon{transform:translate3d(calc(var(--wx)*-.5),calc(var(--wy)*-.45),0) scale(calc(1 + var(--world-scroll)*.25));}
+.world-skyline{transform:translate3d(calc(var(--wx)*-.35),calc(var(--wy)*-.2),0);}
+.world-containers{transform:translate3d(calc(var(--wx)*-.2),calc(var(--wy)*-.15),0);}
+.world-vessel{will-change:transform;animation:vessel-drift 7s ease-in-out infinite alternate;}
+.world-route-hero path:first-child,.journey-backdrop svg path:first-child{stroke-dasharray:9 13;animation:world-route-flow 15s linear infinite;}
+.world-route-hero .route-hot,.journey-backdrop svg .route-hot{stroke-dasharray:2 19;animation:world-route-flow 4s linear infinite;}
+.journey-globe{transform:translate3d(calc(var(--wx)*.5),calc(var(--wy)*.4),0) scale(calc(1 + var(--world-scroll)*.08));}
+.chapter-visual{will-change:transform;transition:transform .18s ease-out;}
+.world-chapter,.world-journey,.world-capabilities,.chapter-arrival,.world-contact{isolation:isolate;}
+@keyframes world-route-flow{to{stroke-dashoffset:-440}}
+@keyframes vessel-drift{from{translate:-1% 0;rotate:-.25deg}to{translate:1% -6px;rotate:.25deg}}
+@media(max-width:700px){.world-cursor{display:none}.world-scroll-index{right:9px;bottom:16px}.world-experience:before{background:radial-gradient(260px circle at var(--cursor-x) var(--cursor-y),rgba(83,231,211,.05),transparent 70%)}}
+@media(prefers-reduced-motion:reduce){.world-vessel,.world-route-hero path,.journey-backdrop svg path{animation:none!important}.world-cursor{display:none!important}}
