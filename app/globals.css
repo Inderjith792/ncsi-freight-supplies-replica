@@ -552,3 +552,8 @@ html{scroll-behavior:smooth;scroll-padding-top:0}body{background:var(--world-bg)
 .ncsi-journey .journey-air-traces.is-air .wake-core{stroke:rgba(174,225,239,.62);stroke-width:3.2}
 .ncsi-journey .journey-air-traces.is-air .wake-highlight{stroke:rgba(237,250,255,.86);stroke-width:1.2}
 @keyframes ncsi-wake-fade{0%{opacity:1}100%{opacity:0}}
+
+
+/* Hide the native pointer throughout the immersive journey; keep custom cursor and UI controls usable. */
+.ncsi-journey,
+.ncsi-journey *{cursor:none!important}
