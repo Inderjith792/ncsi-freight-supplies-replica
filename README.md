@@ -1,16 +1,18 @@
 # NCSI Freight Supplies — Global Freight Pulse
 
-Responsive Next.js recreation of the NCSI Freight Supplies website, including eight pages and the original interactive homepage concept, **The Global Freight Pulse**.
+Responsive Next.js website concept for NCSI Freight Supplies, with an immersive Three.js homepage and dedicated content for each key route.
 
 ## Routes
-- `/` — Home
-- `/lease-containers` — Container leasing
-- `/freight-services` — Freight services
-- `/track-shipment` — Shipment tracking entry
-- `/request-quote` — Request a quote
-- `/industries` — Industries
-- `/about` — About NCSI
-- `/contact` — Contact
+- `/` — Immersive homepage / Global Freight Pulse journey
+- `/lease-containers` — Container leasing options and enquiry checklist
+- `/freight-services` — Ocean freight, air freight, and coordination overview
+- `/track-shipment` — Tracking portal handoff (requires a real portal URL)
+- `/request-quote` — Quote request form and preparation checklist
+- `/industries` — Industry-specific logistics requirements
+- `/about` — NCSI approach and working principles
+- `/contact` — Contact details and enquiry form
+
+Legacy aliases `/about-us` and `/request-a-quote` redirect to the canonical routes.
 
 ## Run locally
 Requires Node.js 20.9+.
@@ -20,9 +22,9 @@ npm install
 npm run dev
 ```
 
-Production check: `npm run build`.
+Before deployment, run `npm run build` and check the site at desktop and mobile widths.
 
-## Notes
-The Global Freight Pulse is an illustrative CSS/SVG experience, not live tracking. Forms can use `NEXT_PUBLIC_FORM_ENDPOINT` or fall back to a prefilled email. Shipment tracking requires a real carrier/portal integration before it can display live status. Original Hostinger-hosted images are referenced where available; verify licensing and availability before production use.
+## Integrations and accuracy
+The Global Freight Pulse / immersive homepage is an illustrative interactive experience, not a live shipment tracking system. Shipment tracking requires `NEXT_PUBLIC_TRACKING_URL` to point to a real carrier or shipment portal. Forms can use `NEXT_PUBLIC_FORM_ENDPOINT`; without it, the form opens a prefilled email to `info@ncsifreightsupplies.com`. Do not present illustrative routes or artwork as real-time logistics data.
 
-Deploy to Vercel by importing this repository and using the default Next.js build settings. Do not change the live domain DNS until the Vercel deployment is reviewed.
+Deploy to Vercel by importing this repository and using the default Next.js build settings. Review the production deployment before changing domain DNS.
