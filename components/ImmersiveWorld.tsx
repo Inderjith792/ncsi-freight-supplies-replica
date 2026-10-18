@@ -74,8 +74,12 @@ export function ImmersiveWorld() {
       sun.position.set(-18, 32, 12); sun.castShadow = true;
       sun.shadow.mapSize.set(2048, 2048); sun.shadow.camera.left=-70; sun.shadow.camera.right=70; sun.shadow.camera.top=70; sun.shadow.camera.bottom=-70;
       scene.add(sun);
-      const rim = new THREE.DirectionalLight(0x73cde0, 1.5); rim.position.set(22, 12, -24); scene.add(rim);
-      const fill = new THREE.PointLight(0x2a7897, 80, 120); fill.position.set(0, 12, 8); scene.add(fill);
+      const rim = new THREE.DirectionalLight(0x73cde0, 2.25); rim.position.set(22, 12, -24); scene.add(rim);
+      const fill = new THREE.PointLight(0x2a7897, 95, 150); fill.position.set(0, 12, 8); scene.add(fill);
+      const horizonGlow = new THREE.PointLight(0xffa875, 180, 180);
+      horizonGlow.position.set(-8, 9, -58); scene.add(horizonGlow);
+      const portGlow = new THREE.PointLight(0x45cfc2, 65, 85);
+      portGlow.position.set(-15, 8, -12); scene.add(portGlow);
 
       const mat = (color: ColorRepresentation, metalness = 0.1, roughness = 0.58) =>
         new THREE.MeshStandardMaterial({ color, metalness, roughness });
@@ -92,6 +96,15 @@ export function ImmersiveWorld() {
       });
       const water = new THREE.Mesh(new THREE.PlaneGeometry(420, 420, 220, 220), oceanMat);
       water.rotation.x = -Math.PI / 2; water.position.y = -1.25; water.receiveShadow = true; scene.add(water);
+      // Fine parallel wake lines add scale and directional motion to the sea without heavy geometry.
+      const wakeMaterial = new THREE.LineBasicMaterial({color:0x4eb9bd,transparent:true,opacity:0.11});
+      const wakeLines = new THREE.Group(); scene.add(wakeLines);
+      for(let i=0;i<34;i++) {
+        const z=-42+i*2.45;
+        const points=[new THREE.Vector3(-110, -1.12, z),new THREE.Vector3(-38,-1.12,z+Math.sin(i*0.6)*1.4),new THREE.Vector3(24,-1.12,z+Math.cos(i*0.4)*2.1),new THREE.Vector3(110,-1.12,z+Math.sin(i*0.7)*1.6)];
+        const line=new THREE.Line(new THREE.BufferGeometry().setFromPoints(points),wakeMaterial);
+        wakeLines.add(line);
+      }
 
       const floor = new THREE.Mesh(new THREE.PlaneGeometry(180, 100), mat("#182d36", 0.35, 0.78));
       floor.rotation.x = -Math.PI / 2; floor.position.set(-30, -1.15, -36); scene.add(floor);
@@ -258,12 +271,13 @@ export function ImmersiveWorld() {
         oceanMat.uniforms.uTime.value=t;
         const p=Number(document.documentElement.style.getPropertyValue("--journey-progress"))||0;
         const segment=p*4;
+        // Wide, editorial camera staging: keep the freight assets readable instead of cropping them.
         const keyframes=[
-          {x:-7,y:13,z:38,tx:-12,ty:5,tz:-13},
-          {x:5,y:10,z:38,tx:2,ty:1,tz:14},
-          {x:20,y:22,z:40,tx:18,ty:16,tz:-30},
-          {x:27,y:10,z:34,tx:18,ty:1,tz:-3},
-          {x:0,y:30,z:66,tx:0,ty:4,tz:-14},
+          {x:-1,y:19,z:53,tx:-10,ty:5,tz:-13},
+          {x:5,y:15,z:52,tx:2,ty:1,tz:14},
+          {x:20,y:26,z:52,tx:18,ty:16,tz:-30},
+          {x:28,y:17,z:48,tx:18,ty:1,tz:-3},
+          {x:0,y:34,z:78,tx:0,ty:4,tz:-14},
         ];
         const a=keyframes[Math.min(3,Math.floor(segment))], b=keyframes[Math.min(4,Math.floor(segment)+1)], f=Math.min(1,segment-Math.floor(segment));
         const lerp=(v:number,w:number)=>v+(w-v)*f;
