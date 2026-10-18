@@ -35,10 +35,37 @@ export function ImmersiveWorld() {
       const camera = new THREE.PerspectiveCamera(43, 1, 0.1, 900);
       camera.position.set(0, 16, 34);
       renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: "high-performance" });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, window.innerWidth < 760 ? 1.35 : 1.7));
       renderer.outputColorSpace = THREE.SRGBColorSpace;
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
       renderer.toneMappingExposure = 1.16;
+      // Procedural studio-sky environment: gives metallic surfaces broad, believable reflections
+      // without an external HDR download or a runtime network dependency.
+      const environmentCanvas = document.createElement("canvas");
+      environmentCanvas.width = 1024; environmentCanvas.height = 512;
+      const environmentContext = environmentCanvas.getContext("2d");
+      if (environmentContext) {
+        const sky = environmentContext.createLinearGradient(0, 0, 0, 512);
+        sky.addColorStop(0, "#06111f"); sky.addColorStop(0.34, "#183747");
+        sky.addColorStop(0.53, "#d19a70"); sky.addColorStop(0.61, "#607d85");
+        sky.addColorStop(1, "#071c2b");
+        environmentContext.fillStyle = sky; environmentContext.fillRect(0, 0, 1024, 512);
+        const horizon = environmentContext.createRadialGradient(512, 270, 8, 512, 270, 310);
+        horizon.addColorStop(0, "rgba(255,220,172,0.9)");
+        horizon.addColorStop(0.18, "rgba(255,183,123,0.28)");
+        horizon.addColorStop(1, "rgba(255,183,123,0)");
+        environmentContext.fillStyle = horizon; environmentContext.fillRect(0, 0, 1024, 512);
+        for (let band = 0; band < 18; band++) {
+          const y = 165 + band * 12;
+          environmentContext.fillStyle = band % 3 === 0 ? "rgba(203,239,238,0.12)" : "rgba(5,20,34,0.09)";
+          environmentContext.fillRect(0, y, 1024, band % 4 === 0 ? 2 : 1);
+        }
+      }
+      const environmentTexture = new THREE.CanvasTexture(environmentCanvas);
+      environmentTexture.mapping = THREE.EquirectangularReflectionMapping;
+      environmentTexture.colorSpace = THREE.SRGBColorSpace;
+      environmentTexture.needsUpdate = true;
+      scene.environment = environmentTexture;
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
@@ -280,7 +307,7 @@ export function ImmersiveWorld() {
         frame=window.requestAnimationFrame(render);
       };
       frame=window.requestAnimationFrame(render);
-      cleanup=()=>{window.cancelAnimationFrame(frame);window.removeEventListener("resize",resize);window.removeEventListener("pointermove",move);scene.traverse(o=>{if(o instanceof THREE.Mesh||o instanceof THREE.Points){o.geometry.dispose();const m=o.material;if(Array.isArray(m))m.forEach(x=>x.dispose());else m.dispose();}});renderer?.dispose();};
+      cleanup=()=>{window.cancelAnimationFrame(frame);window.removeEventListener("resize",resize);window.removeEventListener("pointermove",move);scene.traverse(o=>{if(o instanceof THREE.Mesh||o instanceof THREE.Points||o instanceof THREE.Line||o instanceof THREE.LineSegments){o.geometry.dispose();const m=o.material;if(Array.isArray(m))m.forEach(x=>x.dispose());else m.dispose();}});environmentTexture.dispose();renderer?.dispose();};
     }).catch((error) => console.error("Unable to initialize NCSI 3D world:", error));
 
     return () => { disposed = true; if(frame)window.cancelAnimationFrame(frame);cleanup?.();renderer?.dispose(); };
