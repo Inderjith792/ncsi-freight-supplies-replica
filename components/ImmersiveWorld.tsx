@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { LeadForm } from "@/components/LeadForm";
-import type { ColorRepresentation, Material, Object3D } from "three";
+import type { ColorRepresentation, Material, Mesh, Object3D } from "three";
 
 const scenes = [
   { id: "origin", no: "01", eyebrow: "THE ORIGIN / METAL & MACHINERY", title: <>Every journey<br /><em>begins with steel.</em></>, copy: "A container is more than a box. It is the first link in a chain that connects factories, people and markets.", stat: "20 / 40 FT", label: "CONTAINER LEASING", mode: "port" },
@@ -83,7 +83,7 @@ export function ImmersiveWorld() {
       scene.add(routeLine);
       const routeGlow = new THREE.Line(new THREE.BufferGeometry().setFromPoints(routeCurve.getPoints(220)),routeGlowMaterial);
       scene.add(routeGlow);
-      const routeMarkers: THREE.Mesh[] = [];
+      const routeMarkers: Mesh[] = [];
       for(let i=0;i<18;i++) {
         const point=routeCurve.getPoint(i/17);
         const marker = new THREE.Mesh(new THREE.SphereGeometry(0.16,10,8),new THREE.MeshBasicMaterial({color: i%3===0 ? 0xf0a46d : 0x68f0dc}));
@@ -148,7 +148,7 @@ export function ImmersiveWorld() {
       const hullGeo = new THREE.ExtrudeGeometry(hullShape,{depth:4.8,bevelEnabled:true,bevelSegments:3,steps:1,bevelSize:0.22,bevelThickness:0.22});
       const hull = new THREE.Mesh(hullGeo, mat("#172c38",0.82,0.22)); hull.position.set(0,-1.35,-2.4); hull.castShadow=true; hull.receiveShadow=true; ship.add(hull);
       const waterline = new THREE.Mesh(new THREE.BoxGeometry(28.8,0.12,4.86), mat("#d8e0d9",0.65,0.24)); waterline.position.set(-0.2,-0.1,0); ship.add(waterline);
-      const bowDeck = box(ship,[5.4,0.22,4.3],steel,[12.2,0.52,0]);
+      box(ship,[5.4,0.22,4.3],steel,[12.2,0.52,0]);
       for (let i=0;i<12;i++) { const pipe = new THREE.Mesh(new THREE.CylinderGeometry(0.045,0.045,3.6,8),mat("#c8d0c9",0.78,0.3)); pipe.rotation.x=Math.PI/2; pipe.position.set(-12.8+i*2.15,0.76,0); ship.add(pipe); }
       for (let i=0;i<7;i++) { const bollard = new THREE.Mesh(new THREE.CylinderGeometry(0.12,0.15,0.34,10),darkSteel); bollard.position.set(-12+i*4,0.78,2.15); ship.add(bollard); }
       const bridgeWindowMat = new THREE.MeshStandardMaterial({color:"#173b49",metalness:0.45,roughness:0.18,emissive:"#0b303b",emissiveIntensity:0.25});
