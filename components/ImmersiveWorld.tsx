@@ -29,7 +29,7 @@ export function ImmersiveWorld() {
     void import("three").then(async (THREE) => {
       if (disposed) return;
       const scene = new THREE.Scene();
-      scene.background = new THREE.Color("#030713");
+      scene.background = new THREE.Color("#071a22");
       const camera = new THREE.PerspectiveCamera(52, 1, 0.1, 2000);
       camera.position.set(0, 0, 18);
       renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: "high-performance" });
@@ -38,8 +38,8 @@ export function ImmersiveWorld() {
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
       renderer.toneMappingExposure = 1.1;
 
-      scene.add(new THREE.AmbientLight(0x9cb8ff, 0.7));
-      const key = new THREE.PointLight(0x86b7ff, 35, 180);
+      scene.add(new THREE.AmbientLight(0xb8e5dc, 1.15));
+      const key = new THREE.PointLight(0x64d5c4, 48, 220);
       key.position.set(8, 5, 12);
       scene.add(key);
 
@@ -60,8 +60,8 @@ export function ImmersiveWorld() {
           const model = gltf.scene;
           // Oceanic colour grade: shift the nebula's existing colours toward deep-sea blue,
           // cyan and teal while preserving its texture maps and overall luminosity.
-          const oceanTint = new THREE.Color("#168c9d");
-          const deepOcean = new THREE.Color("#062b55");
+          const oceanTint = new THREE.Color("#b9e7dc");
+          const deepOcean = new THREE.Color("#176b70");
           model.traverse((object) => {
             const mesh = object as import("three").Mesh;
             if (!mesh.isMesh) return;
@@ -79,10 +79,10 @@ export function ImmersiveWorld() {
               m.depthWrite = false;
               // The source texture is strongly purple/white, so a subtle tint was nearly invisible.
               // Apply a decisive ocean-blue multiply to the texture while retaining its detail.
-              if (m.color) m.color.copy(oceanTint);
+              if (m.color) m.color.lerp(oceanTint, 0.24);
               if (m.emissive) {
-                m.emissive.copy(deepOcean);
-                m.emissiveIntensity = Math.max(m.emissiveIntensity ?? 0, 0.38);
+                m.emissive.lerp(deepOcean, 0.22);
+                m.emissiveIntensity = Math.max(m.emissiveIntensity ?? 0, 0.16);
               }
               m.needsUpdate = true;
             });
@@ -113,7 +113,7 @@ export function ImmersiveWorld() {
       }
       const starGeometry = new THREE.BufferGeometry();
       starGeometry.setAttribute("position", new THREE.BufferAttribute(points, 3));
-      const stars = new THREE.Points(starGeometry, new THREE.PointsMaterial({ color: 0xc8d9ff, size: 0.8, transparent: true, opacity: 0.72, depthWrite: false }));
+      const stars = new THREE.Points(starGeometry, new THREE.PointsMaterial({ color: 0x9be4d4, size: 0.8, transparent: true, opacity: 0.62, depthWrite: false }));
       scene.add(stars);
 
       const resize = () => {
