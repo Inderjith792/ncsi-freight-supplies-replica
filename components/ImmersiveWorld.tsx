@@ -66,6 +66,23 @@ export function ImmersiveWorld() {
       environmentTexture.colorSpace = THREE.SRGBColorSpace;
       environmentTexture.needsUpdate = true;
       scene.environment = environmentTexture;
+      // Replace the procedural studio environment with the supplied HDR environment when it loads.
+      // The generated environment remains a safe fallback if the EXR is unavailable.
+      let loadedEnvironment: import("three").Texture | undefined;
+      void import("three/examples/jsm/loaders/EXRLoader.js").then(({ EXRLoader }) => {
+        new EXRLoader().load(
+          "/environments/moonless_golf_4k.exr",
+          (texture) => {
+            if (disposed) { texture.dispose(); return; }
+            texture.mapping = THREE.EquirectangularReflectionMapping;
+            loadedEnvironment = texture;
+            scene.environment = texture;
+            environmentTexture.dispose();
+          },
+          undefined,
+          (error) => console.warn("NCSI HDR environment could not be loaded; using the built-in studio environment.", error)
+        );
+      }).catch((error) => console.warn("NCSI EXR loader unavailable; using built-in environment.", error));
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
@@ -233,6 +250,42 @@ export function ImmersiveWorld() {
       }
       // Aircraft: fuselage, tapered nose, swept wings, tailplanes, engine nacelles.
       const aircraft = groupAt(18, 17, -30);
+      // Load the supplied aircraft model. The procedural aircraft below remains a fallback
+      // until the GLB is successfully decoded, so the scene still renders if the asset is missing.
+      void import("three/examples/jsm/loaders/GLTFLoader.js").then(({ GLTFLoader }) => {
+        new GLTFLoader().load(
+          "/models/airbus_beluga.glb",
+          (gltf) => {
+            if (disposed) return;
+            const importedAircraft = gltf.scene;
+            const bounds = new THREE.Box3().setFromObject(importedAircraft);
+            const size = bounds.getSize(new THREE.Vector3());
+            const center = bounds.getCenter(new THREE.Vector3());
+            const largestDimension = Math.max(size.x, size.y, size.z);
+            if (!Number.isFinite(largestDimension) || largestDimension <= 0) {
+              console.warn("NCSI aircraft model has invalid dimensions; keeping procedural fallback.");
+              return;
+            }
+            importedAircraft.position.sub(center);
+            importedAircraft.scale.setScalar(18 / largestDimension);
+            importedAircraft.traverse((object) => {
+              if (object instanceof THREE.Mesh) {
+                object.castShadow = true;
+                object.receiveShadow = true;
+                const materials = Array.isArray(object.material) ? object.material : [object.material];
+                materials.forEach((material) => {
+                  if ("envMapIntensity" in material) (material as THREE.MeshStandardMaterial).envMapIntensity = 1.15;
+                });
+              }
+            });
+            aircraft.clear();
+            aircraft.add(importedAircraft);
+            console.info("NCSI aircraft GLB loaded.", { animations: gltf.animations.length });
+          },
+          undefined,
+          (error) => console.warn("NCSI aircraft GLB could not be loaded; keeping procedural fallback.", error)
+        );
+      }).catch((error) => console.warn("NCSI GLTF loader unavailable; keeping procedural aircraft.", error));
       const fuselage = new THREE.Mesh(new THREE.CylinderGeometry(0.45,0.65,18,16), white);
       fuselage.rotation.z=Math.PI/2; fuselage.castShadow=true; aircraft.add(fuselage);
       const nose = new THREE.Mesh(new THREE.ConeGeometry(0.46,3.8,16), white); nose.rotation.z=-Math.PI/2; nose.position.x=10.3; aircraft.add(nose);
@@ -390,7 +443,7 @@ export function ImmersiveWorld() {
         frame=window.requestAnimationFrame(render);
       };
       frame=window.requestAnimationFrame(render);
-      cleanup=()=>{window.cancelAnimationFrame(frame);window.removeEventListener("resize",resize);window.removeEventListener("pointermove",move);scene.traverse(o=>{if(o instanceof THREE.Mesh||o instanceof THREE.Points||o instanceof THREE.Line||o instanceof THREE.LineSegments){o.geometry.dispose();const m=o.material;if(Array.isArray(m))m.forEach(x=>x.dispose());else m.dispose();}});environmentTexture.dispose();renderer?.dispose();};
+      cleanup=()=>{window.cancelAnimationFrame(frame);window.removeEventListener("resize",resize);window.removeEventListener("pointermove",move);scene.traverse(o=>{if(o instanceof THREE.Mesh||o instanceof THREE.Points||o instanceof THREE.Line||o instanceof THREE.LineSegments){o.geometry.dispose();const m=o.material;if(Array.isArray(m))m.forEach(x=>x.dispose());else m.dispose();}});environmentTexture.dispose();loadedEnvironment?.dispose();renderer?.dispose();};
     }).catch((error) => console.error("Unable to initialize NCSI 3D world:", error));
 
     return () => { disposed = true; if(frame)window.cancelAnimationFrame(frame);cleanup?.();renderer?.dispose(); };
