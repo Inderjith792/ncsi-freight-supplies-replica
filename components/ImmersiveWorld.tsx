@@ -397,7 +397,6 @@ export function ImmersiveWorld() {
   }, []);
 
   useEffect(() => {
-    let raf = 0;
     let px = 0, py = 0, tx = 0, ty = 0;
     let frame = 0;
     const move = (event: PointerEvent) => {
