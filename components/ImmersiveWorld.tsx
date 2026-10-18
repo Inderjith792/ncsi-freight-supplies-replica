@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { LeadForm } from "@/components/LeadForm";
+import type { ColorRepresentation, Material } from "three";
 
 const scenes = [
   { id: "origin", no: "01", eyebrow: "THE ORIGIN / METAL & MACHINERY", title: <>Every journey<br /><em>begins with steel.</em></>, copy: "A container is more than a box. It is the first link in a chain that connects factories, people and markets.", stat: "20 / 40 FT", label: "CONTAINER LEASING", mode: "port" },
@@ -49,7 +50,7 @@ export function ImmersiveWorld() {
       const rim = new THREE.DirectionalLight(0x4ac9de, 2.6); rim.position.set(22, 12, -24); scene.add(rim);
       const fill = new THREE.PointLight(0x2a7897, 80, 120); fill.position.set(0, 12, 8); scene.add(fill);
 
-      const mat = (color: THREE.ColorRepresentation, metalness = 0.1, roughness = 0.58) =>
+      const mat = (color: ColorRepresentation, metalness = 0.1, roughness = 0.58) =>
         new THREE.MeshStandardMaterial({ color, metalness, roughness });
       const steel = mat("#738b99", 0.78, 0.32);
       const darkSteel = mat("#253c4b", 0.72, 0.36);
@@ -68,7 +69,7 @@ export function ImmersiveWorld() {
       const floor = new THREE.Mesh(new THREE.PlaneGeometry(180, 100), mat("#182d36", 0.35, 0.78));
       floor.rotation.x = -Math.PI / 2; floor.position.set(-30, -1.15, -36); scene.add(floor);
 
-      function box(parent: THREE.Object3D, size: [number, number, number], material: THREE.Material, pos: [number, number, number], bevel = false) {
+      function box(parent: THREE.Object3D, size: [number, number, number], material: Material, pos: [number, number, number], bevel = false) {
         const geometry = new THREE.BoxGeometry(...size);
         const mesh = new THREE.Mesh(geometry, material);
         mesh.position.set(...pos); mesh.castShadow = true; mesh.receiveShadow = true; parent.add(mesh);
