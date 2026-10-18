@@ -61,6 +61,7 @@ export function ImmersiveWorld() {
           // Oceanic colour grade: shift the nebula's existing colours toward deep-sea blue,
           // cyan and teal while preserving its texture maps and overall luminosity.
           const oceanTint = new THREE.Color("#168c9d");
+          const deepOcean = new THREE.Color("#062b55");
           model.traverse((object) => {
             const mesh = object as import("three").Mesh;
             if (!mesh.isMesh) return;
@@ -70,18 +71,18 @@ export function ImmersiveWorld() {
               const m = material as import("three").Material & {
                 side?: import("three").Side;
                 depthWrite?: boolean;
-                color?: THREE.Color;
-                emissive?: THREE.Color;
+                color?: import("three").Color;
+                emissive?: import("three").Color;
                 emissiveIntensity?: number;
               };
               m.side = THREE.DoubleSide;
               m.depthWrite = false;
-              // A subtle multiplicative tint keeps nebula details visible instead of painting
-              // the whole model a flat cyan. Material maps remain untouched.
-              if (m.color) m.color.lerp(oceanTint, 0.34);
+              // The source texture is strongly purple/white, so a subtle tint was nearly invisible.
+              // Apply a decisive ocean-blue multiply to the texture while retaining its detail.
+              if (m.color) m.color.copy(oceanTint);
               if (m.emissive) {
-                m.emissive.lerp(new THREE.Color("#063f58"), 0.48);
-                m.emissiveIntensity = Math.max(m.emissiveIntensity ?? 0, 0.22);
+                m.emissive.copy(deepOcean);
+                m.emissiveIntensity = Math.max(m.emissiveIntensity ?? 0, 0.38);
               }
               m.needsUpdate = true;
             });
