@@ -162,7 +162,7 @@ export function ImmersiveWorld() {
       scene.add(routeParticles);
       let trailHead = 0;
       const worldPointer = new THREE.Vector3();
-      const move=(e:PointerEvent)=>{pointer.tx=(e.clientX/window.innerWidth-.5)*2;pointer.ty=(e.clientY/window.innerHeight-.5)*2;worldPointer.set(pointer.tx*18, (0.5-pointer.ty)*10, -8);};
+      const move=(e:PointerEvent)=>{pointer.tx=(e.clientX/window.innerWidth-.5)*2;pointer.ty=(e.clientY/window.innerHeight-.5)*2;worldPointer.set(pointer.tx*18, (0.5-pointer.ty)*10, -8);document.documentElement.style.setProperty("--cursor-x", `${e.clientX}px`);document.documentElement.style.setProperty("--cursor-y", `${e.clientY}px`);};
       window.addEventListener("pointermove",move,{passive:true});
       const start=performance.now();
       const render=(now:number)=>{
@@ -189,7 +189,7 @@ export function ImmersiveWorld() {
         camera.rotation.z += pointer.x*0.002;
         pointer.x += (pointer.tx-pointer.x)*0.075;
         pointer.y += (pointer.ty-pointer.y)*0.075;
-        const posAttr = trailGeometry.getAttribute("position") as THREE.BufferAttribute;
+        const posAttr = trailGeometry.getAttribute("position") as import("three").BufferAttribute;
         const idx = (trailHead % cursorTrailCount) * 3;
         trailPositions[idx] = worldPointer.x + (Math.random()-0.5)*0.9;
         trailPositions[idx+1] = worldPointer.y + (Math.random()-0.5)*0.7;
