@@ -19,6 +19,8 @@ export function ImmersiveWorld() {
   const [inquiry, setInquiry] = useState(false);
   const pointerRef = useRef({ x: -100, y: -100, angle: 0 });
   const cursorRef = useRef<HTMLDivElement>(null);
+  const traceRef = useRef<HTMLDivElement>(null);
+  const tracePointsRef = useRef<Array<{ x: number; y: number; time: number }>>([]);
 
   useEffect(() => {
     const move = (event: PointerEvent | MouseEvent) => {
@@ -33,6 +35,26 @@ export function ImmersiveWorld() {
       cursor.style.setProperty("left", event.clientX + "px", "important");
       cursor.style.setProperty("top", event.clientY + "px", "important");
       cursor.style.setProperty("--cursor-angle", p.angle + "deg");
+      const traces = traceRef.current;
+      if (traces) {
+        const now = performance.now();
+        const points = tracePointsRef.current;
+        points.push({ x: event.clientX, y: event.clientY, time: now });
+        while (points.length > 18 || (points.length && now - points[0].time > 520)) points.shift();
+        traces.replaceChildren(...points.map((point, index) => {
+          const mark = document.createElement("span");
+          const age = Math.max(0, now - point.time);
+          const life = Math.max(0, 1 - age / 520);
+          const ratio = points.length <= 1 ? 1 : index / (points.length - 1);
+          mark.style.left = point.x + "px";
+          mark.style.top = point.y + "px";
+          mark.style.opacity = String(life * (0.18 + ratio * 0.62));
+          mark.style.transform = "translate(-50%,-50%) scale(" + (0.35 + ratio * 0.9) + ")";
+          mark.style.width = (2 + ratio * 5) + "px";
+          mark.style.height = (2 + ratio * 5) + "px";
+          return mark;
+        }));
+      }
     };
     window.addEventListener("pointermove", move, true);
     window.addEventListener("mousemove", move, true);
@@ -246,6 +268,7 @@ export function ImmersiveWorld() {
         </div>
         <div className="journey-rail">{stages.map((item, index) => <button key={item.id} aria-label={"Go to " + item.label} className={index === active ? "is-active" : ""} onClick={() => scrollToStage(index)}><span>{item.no}</span><i /></button>)}</div>
         <div className="journey-footer"><span>SCROLL TO ROTATE THE WORLD <b>↓</b></span><div className="journey-progress"><i style={{ transform: "scaleX(" + progress + ")" }} /></div><b>{String(Math.round(progress * 100)).padStart(2, "0")}%</b></div>
+        <div ref={traceRef} className={"journey-air-traces " + (stage.id === "air" ? "is-active" : "")} aria-hidden="true" />
         <div ref={cursorRef} className={"journey-cursor " + (stage.id === "ocean" ? "cursor-ship" : stage.id === "air" ? "cursor-flight" : "cursor-default")} aria-hidden="true"><span className="cursor-vehicle">{stage.id === "ocean" ? "🚢" : stage.id === "air" ? "✈" : "·"}</span><i /></div>
         {inquiry && <div className="journey-inquiry-backdrop" role="dialog" aria-modal="true" aria-label="Start a shipment inquiry"><div className="journey-inquiry"><button className="inquiry-close" onClick={() => setInquiry(false)} aria-label="Close inquiry">×</button><div className="journey-eyebrow"><i /> YOUR NEXT MOVE</div><h2>Let&apos;s move<br /><em>something forward.</em></h2><p>Tell us what you need to lease or move.</p><LeadForm kind="quote" buttonLabel="Send inquiry ↗" /></div></div>}
       </div>
