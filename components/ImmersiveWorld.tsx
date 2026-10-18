@@ -189,6 +189,7 @@ export function ImmersiveWorld() {
       const move=(e:PointerEvent)=>{pointer.tx=(e.clientX/window.innerWidth-.5)*2;pointer.ty=(e.clientY/window.innerHeight-.5)*2;worldPointer.set(pointer.tx*18, (0.5-pointer.ty)*10, -8);document.documentElement.style.setProperty("--cursor-x", `${e.clientX}px`);document.documentElement.style.setProperty("--cursor-y", `${e.clientY}px`);};
       window.addEventListener("pointermove",move,{passive:true});
       const start=performance.now();
+      let lastFrame = start;
       const render=(now:number)=>{
         if(disposed)return;
         const t=(now-start)/1000;
@@ -206,8 +207,8 @@ export function ImmersiveWorld() {
         const lerp=(v:number,w:number)=>v+(w-v)*f;
         cameraGoal.set(lerp(a.x,b.x)+pointer.x*3.8,lerp(a.y,b.y)-pointer.y*2.4,lerp(a.z,b.z));
         lookGoal.set(lerp(a.tx,b.tx)+pointer.x*2.1,lerp(a.ty,b.ty)-pointer.y*1.2,lerp(a.tz,b.tz));
-        const frameDelta = Math.min(0.05, Math.max(0.001, (now - (render as unknown as { lastFrame?: number }).lastFrame! || 16.67) / 1000));
-        (render as unknown as { lastFrame?: number }).lastFrame = now;
+        const frameDelta = Math.min(0.05, Math.max(0.001, (now - lastFrame) / 1000));
+        lastFrame = now;
         const cameraEase = 1 - Math.exp(-frameDelta * 4.5);
         camera.position.lerp(cameraGoal, cameraEase);
         lookCurrent.lerp(lookGoal, cameraEase * 0.82);
