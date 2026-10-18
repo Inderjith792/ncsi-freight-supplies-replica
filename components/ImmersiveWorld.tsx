@@ -294,9 +294,13 @@ export function ImmersiveWorld() {
         }
         posAttr.needsUpdate = true;
         trailMaterial.opacity = 0.12 + Math.min(0.58, pointerSpeed*2.4);
-        const routePhase = (t*0.055)%1;
-        routePulse.position.copy(routeCurve.getPoint(routePhase));
-        beaconLight.position.copy(routePulse.position); beaconLight.position.y += 1.8;
+        const routePhase = ((t * 0.055) % 1 + 1) % 1;
+        // Guard the animated route sample so a transient invalid curve sample cannot kill RAF.
+        const routePoint = routeCurve.getPoint(routePhase);
+        if (routePoint && Number.isFinite(routePoint.x) && Number.isFinite(routePoint.y) && Number.isFinite(routePoint.z)) {
+          routePulse.position.set(routePoint.x, routePoint.y, routePoint.z);
+        }
+        beaconLight.position.set(routePulse.position.x, routePulse.position.y + 1.8, routePulse.position.z);
         routePulse.scale.setScalar(0.78 + Math.sin(t*3.2)*0.18);
         routeMarkers.forEach((marker,i)=>{const pulse=0.82+0.18*Math.sin(t*1.8+i*0.7);marker.scale.setScalar(pulse);});
         ship.position.x=2+Math.sin(t*0.18)*0.35; ship.position.y=Math.sin(t*0.55)*0.08; ship.rotation.z=Math.sin(t*0.16)*0.008;
