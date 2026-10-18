@@ -448,3 +448,39 @@ html{scroll-behavior:smooth;scroll-padding-top:0}body{background:var(--world-bg)
  .ncsi-journey .journey-stage .journey-copy{left:7vw!important;top:70%!important;width:86vw!important;transform:translateY(-30%)!important}
  .ncsi-journey .journey-stage .journey-copy h1{font-size:clamp(42px,11vw,64px)!important}
 }
+
+
+/* Final art-direction pass: one cinematic freight frame, not a collage of floating cards. */
+.ncsi-journey{background:#071117!important;color:#f3f1e9!important;isolation:isolate;overflow:hidden}
+.ncsi-journey .journey-webgl{display:none!important}
+.ncsi-journey .journey-photo-scene{z-index:0!important;opacity:1!important;transform:none!important;filter:none!important;background-image:none!important;background-color:#071117!important}
+.ncsi-journey .journey-photo-scene:before{content:""!important;position:absolute;inset:0;background:radial-gradient(ellipse at 72% 48%,rgba(20,66,79,.48),transparent 48%),linear-gradient(115deg,#071117 0%,#0a1c24 52%,#071117 100%)!important}
+.ncsi-journey .journey-photo-scene:after{content:""!important;position:absolute;inset:0;opacity:.2;background-image:linear-gradient(rgba(211,235,235,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(211,235,235,.05) 1px,transparent 1px)!important;background-size:80px 80px!important;mask-image:linear-gradient(90deg,transparent 15%,#000 100%)}
+.ncsi-journey .journey-project-field{z-index:2!important;opacity:1!important;pointer-events:none!important;perspective:1400px}
+.ncsi-journey .project-orbit,.ncsi-journey .project-card-side,.ncsi-journey .project-card-mini,.ncsi-journey .project-coordinate{display:none!important}
+.ncsi-journey .project-card-main{position:absolute!important;left:auto!important;right:7.2vw!important;top:50%!important;width:min(54vw,850px)!important;height:min(67vh,690px)!important;min-height:360px!important;transform:translateY(-50%) rotateY(-7deg) rotateX(1.5deg)!important;transform-origin:center!important;border:1px solid rgba(207,232,230,.23)!important;border-radius:2px!important;overflow:hidden!important;background:#10232b!important;box-shadow:0 42px 110px rgba(0,0,0,.42),0 0 0 10px rgba(255,255,255,.018)!important;animation:cinematic-frame-in 1.05s cubic-bezier(.2,.7,.2,1) both!important}
+.ncsi-journey .project-card-main:before{content:"";position:absolute;z-index:2;inset:0;background:linear-gradient(180deg,rgba(4,15,20,.02) 30%,rgba(4,15,20,.2) 58%,rgba(4,15,20,.86) 100%),linear-gradient(90deg,rgba(4,15,20,.18),transparent 45%);pointer-events:none}
+.ncsi-journey .project-card-main .project-card-image{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;background-size:cover!important;background-position:center!important;filter:saturate(.82) contrast(1.06)!important;transform:scale(1.025)!important;animation:cinematic-image-drift 22s ease-in-out infinite alternate!important}
+.ncsi-journey .project-card-meta{position:absolute!important;z-index:3!important;left:clamp(18px,2.3vw,34px)!important;right:clamp(18px,2.3vw,34px)!important;top:clamp(18px,2.3vw,34px)!important;display:flex!important;justify-content:space-between!important;color:rgba(245,246,239,.8)!important;font-size:9px!important;letter-spacing:.16em!important}
+.ncsi-journey .project-card-title{position:absolute!important;z-index:3!important;left:clamp(22px,3vw,44px)!important;bottom:clamp(68px,8vh,100px)!important;color:#fff!important;font-size:clamp(38px,5.3vw,76px)!important;line-height:.9!important;letter-spacing:-.065em!important;text-shadow:0 2px 28px rgba(0,0,0,.28)!important}
+.ncsi-journey .project-card-caption{position:absolute!important;z-index:3!important;left:clamp(24px,3vw,44px)!important;bottom:clamp(28px,4vh,48px)!important;color:rgba(255,255,255,.76)!important;font-size:10px!important;letter-spacing:.19em!important;text-transform:uppercase!important}
+.ncsi-journey .journey-stage{z-index:5!important;background:transparent!important}
+.ncsi-journey .journey-stage .journey-vignette{z-index:1!important;pointer-events:none!important;background:linear-gradient(90deg,rgba(7,17,23,.7) 0%,rgba(7,17,23,.2) 42%,transparent 68%),linear-gradient(0deg,rgba(7,17,23,.55),transparent 24%,transparent 80%,rgba(7,17,23,.22))!important}
+.ncsi-journey .journey-stage .journey-copy{left:clamp(30px,7.5vw,124px)!important;top:51%!important;width:min(400px,31vw)!important;transform:translateY(-42%)!important;z-index:8!important}
+.ncsi-journey .journey-stage .journey-copy h1{font-size:clamp(48px,5.2vw,78px)!important;line-height:.91!important;letter-spacing:-.075em!important;max-width:8ch!important}
+.ncsi-journey .journey-stage .journey-copy>p{max-width:340px!important;color:rgba(237,241,235,.72)!important;font-size:13px!important;line-height:1.85!important}
+.ncsi-journey .journey-eyebrow,.ncsi-journey .journey-counter,.ncsi-journey .journey-stat,.ncsi-journey .journey-cta{position:relative;z-index:8}
+.ncsi-journey .journey-nav,.ncsi-journey .journey-rail,.ncsi-journey .journey-footer{z-index:20!important}
+.ncsi-journey .journey-rail{right:2.5vw!important}
+.ncsi-journey .journey-footer{left:clamp(30px,7.5vw,124px)!important;right:clamp(30px,7.5vw,124px)!important}
+@keyframes cinematic-frame-in{from{opacity:0;transform:translateY(calc(-50% + 22px)) rotateY(-10deg) scale(.985)}to{opacity:1;transform:translateY(-50%) rotateY(-7deg) rotateX(1.5deg) scale(1)}}
+@keyframes cinematic-image-drift{from{transform:scale(1.025) translate3d(-.5%,0,0)}to{transform:scale(1.09) translate3d(.7%,-.5%,0)}}
+@media(max-width:760px){
+ .ncsi-journey .project-card-main{left:7vw!important;right:7vw!important;top:29%!important;width:86vw!important;height:34vh!important;min-height:210px!important;transform:translateY(-50%) rotateY(-3deg)!important}
+ .ncsi-journey .journey-stage .journey-copy{left:7vw!important;top:68%!important;width:86vw!important;transform:translateY(-18%)!important}
+ .ncsi-journey .journey-stage .journey-copy h1{font-size:clamp(40px,10vw,60px)!important;max-width:9ch!important}
+ .ncsi-journey .journey-stage .journey-copy>p{max-width:94%!important;font-size:12px!important;line-height:1.65!important}
+ .ncsi-journey .project-card-title{font-size:clamp(32px,9vw,52px)!important}
+ .ncsi-journey .journey-footer{left:7vw!important;right:7vw!important}
+}
+@media(prefers-reduced-motion:reduce){.ncsi-journey .project-card-main,.ncsi-journey .project-card-image{animation:none!important}}
