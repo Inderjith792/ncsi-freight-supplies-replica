@@ -100,13 +100,24 @@ export function ImmersiveWorld() {
       const ship = groupAt(2, 0, 18); ship.scale.setScalar(0.78);
       const hullShape = new THREE.Shape(); hullShape.moveTo(-16,-0.1); hullShape.lineTo(13.2,-0.1); hullShape.lineTo(15.8,0.55); hullShape.lineTo(12.8,2.5); hullShape.lineTo(-12.8,2.5); hullShape.lineTo(-15.6,1.25); hullShape.closePath();
       const hullGeo = new THREE.ExtrudeGeometry(hullShape,{depth:4.8,bevelEnabled:true,bevelSegments:3,steps:1,bevelSize:0.22,bevelThickness:0.22});
-      const hull = new THREE.Mesh(hullGeo, mat("#172c38",0.72,0.27)); hull.position.set(0,-1.35,-2.4); hull.castShadow=true; hull.receiveShadow=true; ship.add(hull);
+      const hull = new THREE.Mesh(hullGeo, mat("#172c38",0.82,0.22)); hull.position.set(0,-1.35,-2.4); hull.castShadow=true; hull.receiveShadow=true; ship.add(hull);
+      const waterline = new THREE.Mesh(new THREE.BoxGeometry(28.8,0.12,4.86), mat("#d8e0d9",0.65,0.24)); waterline.position.set(-0.2,-0.1,0); ship.add(waterline);
+      const bowDeck = box(ship,[5.4,0.22,4.3],steel,[12.2,0.52,0]);
+      for (let i=0;i<12;i++) { const pipe = new THREE.Mesh(new THREE.CylinderGeometry(0.045,0.045,3.6,8),mat("#c8d0c9",0.78,0.3)); pipe.rotation.x=Math.PI/2; pipe.position.set(-12.8+i*2.15,0.76,0); ship.add(pipe); }
+      for (let i=0;i<7;i++) { const bollard = new THREE.Mesh(new THREE.CylinderGeometry(0.12,0.15,0.34,10),darkSteel); bollard.position.set(-12+i*4,0.78,2.15); ship.add(bollard); }
+      const bridgeWindowMat = new THREE.MeshStandardMaterial({color:"#173b49",metalness:0.45,roughness:0.18,emissive:"#0b303b",emissiveIntensity:0.25});
+      box(ship,[3.65,0.78,4.25],bridgeWindowMat,[-11,4.35,0]);
+      box(ship,[4.4,0.12,4.7],steel,[-11,5.1,0]);
+      const mast = new THREE.Mesh(new THREE.CylinderGeometry(0.045,0.07,2.2,8),white); mast.position.set(-11,6.2,0); ship.add(mast);
+      for (const side of [-1,1]) { const rail = box(ship,[25,0.12,0.08],white,[0,0.78,side*2.34]); rail.material = white; }
       box(ship,[29,0.55,4.9],mat("#c9d1d0",0.62,0.32),[0,0.42,0]);
       box(ship,[4,4.8,4.5],white,[-11,3,0]);
       box(ship,[3.2,1.1,3.4],teal,[-11,5.8,0]);
       for(let row=0;row<3;row++) for(let col=0;col<7;col++) {
         const palette=[orange,teal,mat("#d7d9d2",0.4,0.5),mat("#1f4c65",0.4,0.5),mat("#9d5538",0.5,0.4)];
-        box(ship,[3.6,1.45,2.05],palette[(row*2+col)%palette.length],[-7.5+col*2.05,1.65+row*1.5, row%2?0.65:-0.65],true);
+        const container=box(ship,[3.6,1.45,2.05],palette[(row*2+col)%palette.length],[-7.5+col*2.05,1.65+row*1.5, row%2?0.65:-0.65],true);
+        for(let rib=-5;rib<=5;rib++) box(container,[0.035,1.3,2.08],mat("#102b36",0.42,0.58),[rib*0.31,0,0]);
+        box(container,[0.8,0.08,0.04],white,[-1.1,0.47,1.04]);
       }
       // Aircraft: fuselage, tapered nose, swept wings, tailplanes, engine nacelles.
       const aircraft = groupAt(18, 17, -30);
@@ -138,7 +149,20 @@ export function ImmersiveWorld() {
       const resize=()=>{if(!canvas || disposed)return; const w=canvas.clientWidth||window.innerWidth;const h=canvas.clientHeight||window.innerHeight;renderer?.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();};
       resize(); window.addEventListener("resize",resize);
       const pointer={x:0,y:0,tx:0,ty:0};
-      const move=(e:PointerEvent)=>{pointer.tx=(e.clientX/window.innerWidth-.5)*2;pointer.ty=(e.clientY/window.innerHeight-.5)*2;};
+      const cameraGoal = new THREE.Vector3();
+      const lookGoal = new THREE.Vector3();
+      const lookCurrent = new THREE.Vector3(0,4,-10);
+      const cursorTrailCount = 260;
+      const trailPositions = new Float32Array(cursorTrailCount * 3);
+      const trailGeometry = new THREE.BufferGeometry();
+      trailGeometry.setAttribute("position", new THREE.BufferAttribute(trailPositions, 3));
+      const trailMaterial = new THREE.PointsMaterial({ color: 0x78ead7, size: 0.11, transparent: true, opacity: 0.62, depthWrite: false, blending: THREE.AdditiveBlending });
+      const routeParticles = new THREE.Points(trailGeometry, trailMaterial);
+      routeParticles.frustumCulled = false;
+      scene.add(routeParticles);
+      let trailHead = 0;
+      const worldPointer = new THREE.Vector3();
+      const move=(e:PointerEvent)=>{pointer.tx=(e.clientX/window.innerWidth-.5)*2;pointer.ty=(e.clientY/window.innerHeight-.5)*2;worldPointer.set(pointer.tx*18, (0.5-pointer.ty)*10, -8);};
       window.addEventListener("pointermove",move,{passive:true});
       const start=performance.now();
       const render=(now:number)=>{
@@ -156,9 +180,28 @@ export function ImmersiveWorld() {
         ];
         const a=keyframes[Math.min(3,Math.floor(segment))], b=keyframes[Math.min(4,Math.floor(segment)+1)], f=Math.min(1,segment-Math.floor(segment));
         const lerp=(v:number,w:number)=>v+(w-v)*f;
-        camera.position.set(lerp(a.x,b.x)+pointer.x*1.8,lerp(a.y,b.y)-pointer.y*1.1,lerp(a.z,b.z));
-        camera.lookAt(lerp(a.tx,b.tx),lerp(a.ty,b.ty),lerp(a.tz,b.tz));
-        camera.rotation.z=pointer.x*0.006;
+        cameraGoal.set(lerp(a.x,b.x)+pointer.x*3.8,lerp(a.y,b.y)-pointer.y*2.4,lerp(a.z,b.z));
+        lookGoal.set(lerp(a.tx,b.tx)+pointer.x*2.1,lerp(a.ty,b.ty)-pointer.y*1.2,lerp(a.tz,b.tz));
+        const cameraEase = 1 - Math.exp(-Math.min(0.06, 1/60) * 4.5);
+        camera.position.lerp(cameraGoal, cameraEase);
+        lookCurrent.lerp(lookGoal, cameraEase * 0.82);
+        camera.lookAt(lookCurrent);
+        camera.rotation.z += pointer.x*0.002;
+        pointer.x += (pointer.tx-pointer.x)*0.075;
+        pointer.y += (pointer.ty-pointer.y)*0.075;
+        const posAttr = trailGeometry.getAttribute("position") as THREE.BufferAttribute;
+        const idx = (trailHead % cursorTrailCount) * 3;
+        trailPositions[idx] = worldPointer.x + (Math.random()-0.5)*0.9;
+        trailPositions[idx+1] = worldPointer.y + (Math.random()-0.5)*0.7;
+        trailPositions[idx+2] = worldPointer.z + (Math.random()-0.5)*0.9;
+        trailHead++;
+        for (let i=0;i<cursorTrailCount;i++) {
+          const j=i*3;
+          trailPositions[j] += (Math.sin(t*0.7+i*0.12)*0.0015);
+          trailPositions[j+1] += 0.001 + Math.sin(t+i*0.07)*0.001;
+        }
+        posAttr.needsUpdate = true;
+        trailMaterial.opacity = 0.28 + Math.min(0.42, Math.hypot(pointer.tx-pointer.x,pointer.ty-pointer.y)*0.8);
         ship.position.x=2+Math.sin(t*0.18)*0.35; ship.position.y=Math.sin(t*0.55)*0.08; ship.rotation.z=Math.sin(t*0.16)*0.008;
         aircraft.position.x=18+Math.sin(t*0.12)*4; aircraft.position.y=17+Math.sin(t*0.4)*1.1; aircraft.rotation.z=Math.sin(t*0.15)*0.025;
         rail.position.x=18+Math.sin(t*0.18)*1.5;
