@@ -23,6 +23,7 @@ export function ImmersiveWorld() {
     let disposed = false;
     let frame = 0;
     let renderer: import("three").WebGLRenderer | undefined;
+    let aircraftMixer: import("three").AnimationMixer | undefined;
     let cleanup: (() => void) | undefined;
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -280,6 +281,10 @@ export function ImmersiveWorld() {
             });
             aircraft.clear();
             aircraft.add(importedAircraft);
+            if (gltf.animations.length > 0) {
+              aircraftMixer = new THREE.AnimationMixer(importedAircraft);
+              gltf.animations.forEach((clip) => aircraftMixer?.clipAction(clip).play());
+            }
             console.info("NCSI aircraft GLB loaded.", { animations: gltf.animations.length });
           },
           undefined,
@@ -397,6 +402,7 @@ export function ImmersiveWorld() {
         lookGoal.set(lerp(a.tx,b.tx)+pointer.x*2.1,lerp(a.ty,b.ty)-pointer.y*1.2,lerp(a.tz,b.tz));
         const frameDelta = Math.min(0.05, Math.max(0.001, (now - lastFrame) / 1000));
         lastFrame = now;
+        aircraftMixer?.update(frameDelta);
         const cameraEase = 1 - Math.exp(-frameDelta * 4.5);
         camera.position.lerp(cameraGoal, cameraEase);
         lookCurrent.lerp(lookGoal, cameraEase * 0.82);
