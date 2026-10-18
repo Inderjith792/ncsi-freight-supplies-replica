@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: { params: Promise<RouteParams
 }
 
 export function generateStaticParams() {
-  return ["lease-containers", "freight-services", "track-shipment", "request-quote", "industries", "about", "contact"].map((slug) => ({ slug: [slug] }));
+  return [{ slug: [] }, ...["lease-containers", "freight-services", "track-shipment", "request-quote", "industries", "about", "contact"].map((slug) => ({ slug: [slug] }))];
 }
 
 export default async function Page({ params }: { params: Promise<RouteParams> }) {
