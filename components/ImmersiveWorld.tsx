@@ -275,9 +275,27 @@ export function ImmersiveWorld() {
       const rail = groupAt(18,0,-2);
       box(rail,[64,0.35,11],mat("#29343a",0.2,0.9),[0,-0.72,0]);
       for(let i=0;i<52;i++) box(rail,[0.24,0.18,8],mat("#574b3f",0.15,0.85),[-30+i*1.2,-0.48,0]);
-      for(const z of [-2.8,2.8]) box(rail,[64,0.28,0.22],steel,[0,-0.32,z]);
+      for(const z of [-2.8,2.8]) {
+        box(rail,[64,0.28,0.22],steel,[0,-0.32,z]);
+        box(rail,[64,0.045,0.07],mat("#c2d0d0",0.86,0.22),[0,-0.16,z]);
+      }
       box(rail,[8,2.8,5],teal,[-20,1.2,0]); box(rail,[4,1.4,4.7],white,[-22,3,0]);
-      for(let i=0;i<5;i++){ box(rail,[7,2.5,4.7],i%2?orange:mat("#406a7d",0.45,0.4),[-10+i*8,1.1,0],true); for(const x of [-2,2]){const wheel=new THREE.Mesh(new THREE.CylinderGeometry(0.55,0.55,0.35,16),rubber);wheel.rotation.z=Math.PI/2;wheel.position.set(-10+i*8+x,0.05,2.45);rail.add(wheel);}}
+      // Four-sided bogies and wheel hubs give each freight wagon a readable running gear.
+      for(let i=0;i<5;i++) {
+        const wx=-10+i*8;
+        box(rail,[7,2.5,4.7],i%2?orange:mat("#406a7d",0.45,0.4),[wx,1.1,0],true);
+        box(rail,[5.8,0.12,0.12],darkSteel,[wx,0.02,0]);
+        for(const x of [-2,2]) for(const side of [-1,1]) {
+          const wheel=new THREE.Mesh(new THREE.CylinderGeometry(0.55,0.55,0.35,20),rubber);
+          wheel.rotation.z=Math.PI/2; wheel.position.set(wx+x,0.05,side*2.45); rail.add(wheel);
+          const hub=new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.2,0.38,16),steel);
+          hub.rotation.z=Math.PI/2; hub.position.set(wx+x,0.05,side*2.45); rail.add(hub);
+        }
+        for(const side of [-1,1]) {
+          box(rail,[0.08,1.7,0.08],steel,[wx-2.8,1.1,side*2.36]);
+          box(rail,[0.08,1.7,0.08],steel,[wx+2.8,1.1,side*2.36]);
+        }
+      }
       // Tiny distant lights make the network read as a living industrial world.
       const beaconMat = new THREE.MeshBasicMaterial({color:"#57ead7"});
       for(let i=0;i<32;i++){const b=new THREE.Mesh(new THREE.SphereGeometry(0.12,8,8),beaconMat);b.position.set(-48+(i*17)%96,0.2+(i%5)*0.4,-48+(i*23)%85);scene.add(b);}
