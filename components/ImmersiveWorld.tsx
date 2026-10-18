@@ -31,7 +31,7 @@ export function ImmersiveWorld() {
       const scene = new THREE.Scene();
       scene.background = new THREE.Color("#071a22");
       const camera = new THREE.PerspectiveCamera(52, 1, 0.1, 2000);
-      camera.position.set(0, 0, 18);
+      camera.position.set(0, 24, 112);
       renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: "high-performance" });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, window.innerWidth < 760 ? 1.25 : 1.6));
       renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -92,7 +92,10 @@ export function ImmersiveWorld() {
           const size = bounds.getSize(new THREE.Vector3());
           const largest = Math.max(size.x, size.y, size.z);
           model.position.sub(center);
-          if (largest > 0) model.scale.setScalar(260 / largest);
+          if (largest > 0) model.scale.setScalar(180 / largest);
+          // Ocean scenes are commonly authored as horizontal planes; tilt the camera down
+          // from a useful distance so the water surface and scene details fill the frame.
+          model.rotation.x = -0.12;
           world.add(model);
           console.info("NCSI ocean environment loaded.");
         },
@@ -122,7 +125,7 @@ export function ImmersiveWorld() {
         const height = canvas.clientHeight || window.innerHeight;
         renderer.setSize(width, height, false);
         camera.aspect = width / height;
-        camera.fov = width < 760 ? 62 : 52;
+        camera.fov = width < 760 ? 70 : 58;
         camera.updateProjectionMatrix();
       };
       resize();
@@ -138,6 +141,7 @@ export function ImmersiveWorld() {
         world.rotation.z = Math.sin(t * 0.07) * 0.018;
         stars.rotation.y = -t * 0.003;
         camera.position.x += ((window.innerWidth < 760 ? 0 : 1.2) - camera.position.x) * 0.012;
+        camera.position.y += (window.innerWidth < 760 ? 10 : 24 - camera.position.y) * 0.012;
         camera.lookAt(0, 0, 0);
         renderer?.render(scene, camera);
         frame = window.requestAnimationFrame(animate);
