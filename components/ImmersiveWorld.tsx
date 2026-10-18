@@ -157,7 +157,7 @@ export function ImmersiveWorld() {
         const lerp=(v:number,w:number)=>v+(w-v)*f;
         camera.position.set(lerp(a.x,b.x)+pointer.x*1.8,lerp(a.y,b.y)-pointer.y*1.1,lerp(a.z,b.z));
         camera.lookAt(lerp(a.tx,b.tx),lerp(a.ty,b.ty),lerp(a.tz,b.tz));
-        camera.rotation.z+=pointer.x*0.006;
+        camera.rotation.z=pointer.x*0.006;
         ship.position.x=2+Math.sin(t*0.35)*0.7; ship.position.y=Math.sin(t*0.8)*0.12;
         aircraft.position.x=18+Math.sin(t*0.12)*4; aircraft.position.y=17+Math.sin(t*0.4)*1.1; aircraft.rotation.z=Math.sin(t*0.15)*0.025;
         rail.position.x=18+Math.sin(t*0.18)*1.5;
