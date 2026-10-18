@@ -1,14 +1,13 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { SiteShell } from "@/components/SiteShell";
 
 export const metadata: Metadata = {
-  title: { default: "NCSI Freight Supplies | Container Leasing & Global Freight", template: "%s | NCSI Freight Supplies" },
-  description: "Factory-direct container leasing and international freight solutions with transparent pricing, reliable delivery, and worldwide coverage.",
+  title: { default: "NCSI Freight Supplies — Inside Global Trade", template: "%s | NCSI Freight Supplies" },
+  description: "Enter an immersive journey through container leasing and global freight. Asset integrity. Predictable transit.",
   metadataBase: new URL("https://ncsifreightsupplies.com"),
-  openGraph: { title: "NCSI Freight Supplies", description: "Asset Integrity. Predictable Transit.", type: "website" }
+  openGraph: { title: "NCSI Freight Supplies", description: "Asset Integrity. Predictable transit.", type: "website" }
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><body><SiteShell>{children}</SiteShell></body></html>;
+  return <html lang="en"><body>{children}</body></html>;
 }
