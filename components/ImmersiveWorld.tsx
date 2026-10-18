@@ -43,12 +43,12 @@ export function ImmersiveWorld() {
 
   function onPointer(e: React.PointerEvent<HTMLElement>) {
     if (e.pointerType === "touch" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    setPointer({ x: (e.clientX / window.innerWidth - 0.5) * 2, y: (e.clientY / window.innerHeight - 0.5) * 2 });
+    setPointer({ x: e.clientX - window.innerWidth / 2, y: e.clientY - window.innerHeight / 2 });
   }
 
   const scene = scenes[active];
 
-  return <main className="ncsi-journey" onPointerMove={onPointer} style={{ "--px": pointer.x, "--py": pointer.y, "--progress": progress, "--phase": active } as React.CSSProperties}>
+  return <main className="ncsi-journey" onPointerMove={onPointer} style={{ "--px": pointer.x + "px", "--py": pointer.y + "px", "--progress": progress, "--phase": active } as React.CSSProperties}>
     <div className="journey-runway" aria-hidden="true">{scenes.map((s) => <div key={s.id} id={"runway-" + s.id} />)}</div>
     <div className={"journey-stage mode-" + scene.mode}>
       <div className="journey-sky"><div className="sky-glow"/><div className="sky-sun"/><div className="sky-cloud cloud-one"/><div className="sky-cloud cloud-two"/></div>
