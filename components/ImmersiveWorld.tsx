@@ -93,16 +93,6 @@ export function ImmersiveWorld() {
       scene.add(routePulse);
       const beaconLight = new THREE.PointLight(0x4ee5d0,12,28); scene.add(beaconLight);
 
-      const laneMaterial = new THREE.MeshStandardMaterial({color:"#a4b5b5",metalness:0.22,roughness:0.76,emissive:"#28494b",emissiveIntensity:0.08});
-      for(let lane=0;lane<7;lane++) {
-        const line = new THREE.Mesh(new THREE.BoxGeometry(0.09,0.025,28),laneMaterial);
-        line.position.set(-31+lane*4.8,-0.56,-14); port.add(line);
-      }
-      for(let i=0;i<12;i++) {
-        const light = new THREE.Mesh(new THREE.BoxGeometry(0.12,0.08,0.12),new THREE.MeshBasicMaterial({color:0x7af5de}));
-        light.position.set(-31+(i%6)*5.2,0.05,-4+Math.floor(i/6)*5);
-        scene.add(light);
-      }
 
       function box(parent: Object3D, size: [number, number, number], material: Material, pos: [number, number, number], bevel = false) {
         const geometry = new THREE.BoxGeometry(...size);
@@ -119,6 +109,16 @@ export function ImmersiveWorld() {
       // Port: quay, container stacks, gantry cranes and mooring pylons.
       const port = groupAt(-12, 0, -7);
       box(port, [44, 1.1, 20], darkSteel, [0, -0.45, -16]);
+      const laneMaterial = new THREE.MeshStandardMaterial({color:"#a4b5b5",metalness:0.22,roughness:0.76,emissive:"#28494b",emissiveIntensity:0.08});
+      for(let lane=0;lane<7;lane++) {
+        const line = new THREE.Mesh(new THREE.BoxGeometry(0.09,0.025,28),laneMaterial);
+        line.position.set(-31+lane*4.8,-0.56,-14); port.add(line);
+      }
+      for(let i=0;i<12;i++) {
+        const light = new THREE.Mesh(new THREE.BoxGeometry(0.12,0.08,0.12),new THREE.MeshBasicMaterial({color:0x7af5de}));
+        light.position.set(-31+(i%6)*5.2,0.05,-4+Math.floor(i/6)*5);
+        scene.add(light);
+      }
       for (let row=0; row<3; row++) for (let col=0; col<8; col++) {
         const colors = [orange, teal, steel, mat("#a8b9c0",0.5,0.48), mat("#315b71",0.5,0.44)];
         const c = box(port, [4.7, 2.2, 2.7], colors[(row*3+col)%colors.length], [-18+col*5.2, 1.1+row*2.25, -22+row*3.1], true);
