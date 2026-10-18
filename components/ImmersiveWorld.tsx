@@ -139,9 +139,22 @@ export function ImmersiveWorld() {
       box(aircraft,[2.5,0.15,5.2],white,[-7.6,0.05,0]);
       box(aircraft,[0.18,1.6,2.5],teal,[-8.3,0.7,0]);
       for(const x of [-3.2,3.2]) {
-        const engine=new THREE.Mesh(new THREE.CylinderGeometry(0.55,0.62,2.1,16),darkSteel); engine.rotation.x=Math.PI/2; engine.position.set(x,-0.65,0); aircraft.add(engine);
-        const intake=new THREE.Mesh(new THREE.CircleGeometry(0.45,20),rubber); intake.position.set(x,-0.65,1.07); aircraft.add(intake);
+        const engine=new THREE.Mesh(new THREE.CylinderGeometry(0.55,0.62,2.1,24),darkSteel); engine.rotation.x=Math.PI/2; engine.position.set(x,-0.65,0); engine.castShadow=true; aircraft.add(engine);
+        const intake=new THREE.Mesh(new THREE.CircleGeometry(0.45,24),rubber); intake.position.set(x,-0.65,1.07); aircraft.add(intake);
+        const innerFan = new THREE.Mesh(new THREE.CircleGeometry(0.32,18),steel); innerFan.position.set(x,-0.65,1.075); aircraft.add(innerFan);
+        for(let blade=0;blade<8;blade++) {
+          const fin = box(aircraft,[0.035,0.38,0.035],white,[x+Math.cos(blade*Math.PI/4)*0.19,-0.65+Math.sin(blade*Math.PI/4)*0.19,1.09]);
+          fin.rotation.z=blade*Math.PI/4;
+        }
       }
+      const windowMat = new THREE.MeshStandardMaterial({color:"#173b49",metalness:0.32,roughness:0.2,emissive:"#0b2933",emissiveIntensity:0.18});
+      for(let i=0;i<13;i++) {
+        const window = new THREE.Mesh(new THREE.SphereGeometry(0.095,8,6),windowMat);
+        window.scale.set(1,0.55,0.38); window.position.set(-4.8+i*0.78,0.27,0.52); aircraft.add(window);
+      }
+      const cockpit = new THREE.Mesh(new THREE.SphereGeometry(0.42,12,8),windowMat);
+      cockpit.scale.set(1.7,0.7,0.85); cockpit.position.set(8.2,0.24,0); aircraft.add(cockpit);
+      box(aircraft,[0.22,1.2,2.4],orange,[-8.2,0.7,0]);
       // Rail: ballast, sleepers, paired rails, engine and five intermodal wagons.
       const rail = groupAt(18,0,-2);
       box(rail,[64,0.35,11],mat("#29343a",0.2,0.9),[0,-0.72,0]);
