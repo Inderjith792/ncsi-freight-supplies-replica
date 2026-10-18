@@ -206,11 +206,13 @@ export function ImmersiveWorld() {
         const lerp=(v:number,w:number)=>v+(w-v)*f;
         cameraGoal.set(lerp(a.x,b.x)+pointer.x*3.8,lerp(a.y,b.y)-pointer.y*2.4,lerp(a.z,b.z));
         lookGoal.set(lerp(a.tx,b.tx)+pointer.x*2.1,lerp(a.ty,b.ty)-pointer.y*1.2,lerp(a.tz,b.tz));
-        const cameraEase = 1 - Math.exp(-Math.min(0.06, 1/60) * 4.5);
+        const frameDelta = Math.min(0.05, Math.max(0.001, (now - (render as unknown as { lastFrame?: number }).lastFrame! || 16.67) / 1000));
+        (render as unknown as { lastFrame?: number }).lastFrame = now;
+        const cameraEase = 1 - Math.exp(-frameDelta * 4.5);
         camera.position.lerp(cameraGoal, cameraEase);
         lookCurrent.lerp(lookGoal, cameraEase * 0.82);
         camera.lookAt(lookCurrent);
-        camera.rotation.z += pointer.x*0.002;
+        camera.rotation.z = pointer.x*0.002;
         pointer.x += (pointer.tx-pointer.x)*0.075;
         pointer.y += (pointer.ty-pointer.y)*0.075;
         const posAttr = trailGeometry.getAttribute("position") as import("three").BufferAttribute;
