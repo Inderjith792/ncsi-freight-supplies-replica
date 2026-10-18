@@ -508,3 +508,24 @@ html{scroll-behavior:smooth;scroll-padding-top:0}body{background:var(--world-bg)
 }
 @media(prefers-reduced-motion:reduce){.ncsi-journey *{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
 
+
+
+/* Section-aware pointer: ocean ripples with a ship; air mode uses a banking aircraft and contrail. */
+.ncsi-journey{--cursor-x:50vw;--cursor-y:50vh;--cursor-angle:0deg}
+.ncsi-journey .journey-cursor{left:var(--cursor-x)!important;top:var(--cursor-y)!important;width:46px;height:46px;border:0!important;border-radius:50%;mix-blend-mode:normal!important;transform:translate(-50%,-50%) rotate(var(--cursor-angle))!important;display:flex;align-items:center;justify-content:center;transition:width .22s ease,height .22s ease;will-change:left,top,transform}
+.ncsi-journey .journey-cursor .cursor-vehicle{position:relative;z-index:2;display:block;font-family:system-ui,sans-serif;font-size:25px;line-height:1;filter:drop-shadow(0 2px 3px rgba(35,85,88,.18));transform-origin:center}
+.ncsi-journey .journey-cursor i{width:5px;height:5px;background:#b8e4da;border-radius:50%;opacity:.7}
+.ncsi-journey .journey-cursor.cursor-ship{width:52px;height:52px;transform:translate(-50%,-50%) rotate(0deg)!important}
+.ncsi-journey .journey-cursor.cursor-ship:before,.ncsi-journey .journey-cursor.cursor-ship:after{content:"";position:absolute;inset:3px;border:1.5px solid rgba(131,201,189,.85);border-radius:44% 56% 51% 49%;animation:cursor-wave 2.1s ease-out infinite}
+.ncsi-journey .journey-cursor.cursor-ship:after{animation-delay:1.05s}
+.ncsi-journey .journey-cursor.cursor-ship .cursor-vehicle{animation:ship-bob 1.8s ease-in-out infinite}
+.ncsi-journey .journey-cursor.cursor-flight{width:50px;height:50px;transform:translate(-50%,-50%) rotate(var(--cursor-angle))!important}
+.ncsi-journey .journey-cursor.cursor-flight:before{content:"";position:absolute;right:65%;top:calc(50% - 1px);width:42px;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,#a9dcd4);transform-origin:right center;opacity:.9;animation:flight-trail .42s ease-in-out infinite alternate}
+.ncsi-journey .journey-cursor.cursor-flight .cursor-vehicle{font-size:27px;transform:rotate(0deg);animation:flight-pulse .65s ease-in-out infinite alternate}
+.ncsi-journey .journey-cursor.cursor-default .cursor-vehicle{font-size:15px;color:#83c9bd}
+@keyframes cursor-wave{0%{transform:scale(.35);opacity:.9}100%{transform:scale(1.55);opacity:0}}
+@keyframes ship-bob{0%,100%{transform:translateY(-1px) rotate(-4deg)}50%{transform:translateY(2px) rotate(4deg)}}
+@keyframes flight-trail{from{opacity:.35;transform:scaleX(.65)}to{opacity:1;transform:scaleX(1.18)}}
+@keyframes flight-pulse{from{filter:drop-shadow(0 1px 2px rgba(131,201,189,.25))}to{filter:drop-shadow(0 1px 8px rgba(131,201,189,.8))}}
+@media(hover:none),(pointer:coarse){.ncsi-journey .journey-cursor{display:none!important}}
+@media(prefers-reduced-motion:reduce){.ncsi-journey .journey-cursor:before,.ncsi-journey .journey-cursor:after,.ncsi-journey .journey-cursor .cursor-vehicle{animation:none!important}}
