@@ -69,6 +69,41 @@ export function ImmersiveWorld() {
       const floor = new THREE.Mesh(new THREE.PlaneGeometry(180, 100), mat("#182d36", 0.35, 0.78));
       floor.rotation.x = -Math.PI / 2; floor.position.set(-30, -1.15, -36); scene.add(floor);
 
+      // A continuous animated route gives the world a connected operational scale.
+      const routeMaterial = new THREE.LineBasicMaterial({ color: 0x50d8ca, transparent: true, opacity: 0.46 });
+      const routeGlowMaterial = new THREE.LineBasicMaterial({ color: 0x72e6d6, transparent: true, opacity: 0.13 });
+      const routePoints = [
+        new THREE.Vector3(-54,0.18,-10), new THREE.Vector3(-38,0.22,-4),
+        new THREE.Vector3(-20,0.18,8), new THREE.Vector3(-4,0.24,15),
+        new THREE.Vector3(16,0.2,8), new THREE.Vector3(31,0.25,-6),
+        new THREE.Vector3(48,0.2,-20), new THREE.Vector3(64,0.18,-28)
+      ];
+      const routeCurve = new THREE.CatmullRomCurve3(routePoints);
+      const routeLine = new THREE.Line(new THREE.BufferGeometry().setFromPoints(routeCurve.getPoints(220)),routeMaterial);
+      scene.add(routeLine);
+      const routeGlow = new THREE.Line(new THREE.BufferGeometry().setFromPoints(routeCurve.getPoints(220)),routeGlowMaterial);
+      scene.add(routeGlow);
+      const routeMarkers: THREE.Mesh[] = [];
+      for(let i=0;i<18;i++) {
+        const point=routeCurve.getPoint(i/17);
+        const marker = new THREE.Mesh(new THREE.SphereGeometry(0.16,10,8),new THREE.MeshBasicMaterial({color: i%3===0 ? 0xf0a46d : 0x68f0dc}));
+        marker.position.copy(point); scene.add(marker); routeMarkers.push(marker);
+      }
+      const routePulse = new THREE.Mesh(new THREE.SphereGeometry(0.28,12,10),new THREE.MeshBasicMaterial({color:0xd5fff5}));
+      scene.add(routePulse);
+      const beaconLight = new THREE.PointLight(0x4ee5d0,12,28); scene.add(beaconLight);
+
+      const laneMaterial = new THREE.MeshStandardMaterial({color:"#a4b5b5",metalness:0.22,roughness:0.76,emissive:"#28494b",emissiveIntensity:0.08});
+      for(let lane=0;lane<7;lane++) {
+        const line = new THREE.Mesh(new THREE.BoxGeometry(0.09,0.025,28),laneMaterial);
+        line.position.set(-31+lane*4.8,-0.56,-14); port.add(line);
+      }
+      for(let i=0;i<12;i++) {
+        const light = new THREE.Mesh(new THREE.BoxGeometry(0.12,0.08,0.12),new THREE.MeshBasicMaterial({color:0x7af5de}));
+        light.position.set(-31+(i%6)*5.2,0.05,-4+Math.floor(i/6)*5);
+        scene.add(light);
+      }
+
       function box(parent: Object3D, size: [number, number, number], material: Material, pos: [number, number, number], bevel = false) {
         const geometry = new THREE.BoxGeometry(...size);
         const mesh = new THREE.Mesh(geometry, material);
@@ -229,6 +264,11 @@ export function ImmersiveWorld() {
         }
         posAttr.needsUpdate = true;
         trailMaterial.opacity = 0.28 + Math.min(0.42, Math.hypot(pointer.tx-pointer.x,pointer.ty-pointer.y)*0.8);
+        const routePhase = (t*0.055)%1;
+        routePulse.position.copy(routeCurve.getPoint(routePhase));
+        beaconLight.position.copy(routePulse.position); beaconLight.position.y += 1.8;
+        routePulse.scale.setScalar(0.78 + Math.sin(t*3.2)*0.18);
+        routeMarkers.forEach((marker,i)=>{const pulse=0.82+0.18*Math.sin(t*1.8+i*0.7);marker.scale.setScalar(pulse);});
         ship.position.x=2+Math.sin(t*0.18)*0.35; ship.position.y=Math.sin(t*0.55)*0.08; ship.rotation.z=Math.sin(t*0.16)*0.008;
         aircraft.position.x=18+Math.sin(t*0.12)*4; aircraft.position.y=17+Math.sin(t*0.4)*1.1; aircraft.rotation.z=Math.sin(t*0.15)*0.025;
         rail.position.x=18+Math.sin(t*0.18)*1.5;
