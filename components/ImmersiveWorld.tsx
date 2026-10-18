@@ -92,7 +92,7 @@ export function ImmersiveWorld() {
       const oceanMat = new THREE.ShaderMaterial({
         uniforms: { uTime: { value: 0 }, uDeep: { value: new THREE.Color("#06324a") }, uShallow: { value: new THREE.Color("#19778a") }, uSun: { value: new THREE.Vector3(-0.35, 0.85, 0.4) } },
         vertexShader: `varying vec3 vWorld; varying vec2 vUv; uniform float uTime; void main(){ vUv=uv; vec3 p=position; float w=sin(p.x*0.035+uTime*0.42)*0.28+cos(p.y*0.047-uTime*0.31)*0.17+sin((p.x+p.y)*0.021+uTime*0.28)*0.22; p.z+=w; vec4 world=modelMatrix*vec4(p,1.0); vWorld=world.xyz; gl_Position=projectionMatrix*viewMatrix*world; }`,
-        fragmentShader: `uniform vec3 uDeep; uniform vec3 uShallow; uniform vec3 uSun; uniform float uTime; varying vec3 vWorld; varying vec2 vUv; void main(){ float waves=sin(vWorld.x*0.075+uTime*0.38)*cos(vWorld.z*0.061-uTime*0.29); float longWave=sin((vWorld.x-vWorld.z)*0.025+uTime*0.22); float glint=pow(max(0.0,sin(vWorld.x*0.19+vWorld.z*0.13+uTime*0.65)),32.0)*0.12; float fres=pow(1.0-max(0.0,abs(normalize(cross(dFdx(vWorld),dFdy(vWorld))).y)),3.0); vec3 c=mix(uDeep,uShallow,clamp(0.34+waves*0.13+longWave*0.1+fres*0.22,0.0,1.0)); c+=vec3(0.35,0.65,0.72)*(glint+fres*0.08); gl_FragColor=vec4(c,1.0); }`,
+        fragmentShader: `uniform vec3 uDeep; uniform vec3 uShallow; uniform vec3 uSun; uniform float uTime; varying vec3 vWorld; varying vec2 vUv; void main(){ float w1=sin(vWorld.x*0.075+uTime*0.38)*cos(vWorld.z*0.061-uTime*0.29); float w2=sin(vWorld.x*0.021-vWorld.z*0.035+uTime*0.18); float fres=pow(1.0-max(0.0,abs(normalize(cross(dFdx(vWorld),dFdy(vWorld))).y)),2.2); float specA=pow(max(0.0,sin(vWorld.x*0.13+vWorld.z*0.07+uTime*0.5)),22.0); float specB=pow(max(0.0,sin(vWorld.x*0.27-vWorld.z*0.11-uTime*0.72)),38.0); float sunPath=exp(-abs(vWorld.x+vWorld.z*0.32)*0.018); float reflection=(specA*0.09+specB*0.06+sunPath*specA*0.2); vec3 c=mix(uDeep,uShallow,clamp(0.38+w1*0.13+w2*0.11+fres*0.28,0.0,1.0)); c+=vec3(0.28,0.67,0.72)*(reflection+fres*0.11); c+=vec3(0.8,0.48,0.28)*sunPath*specB*0.16; gl_FragColor=vec4(c,1.0); }`,
       });
       const water = new THREE.Mesh(new THREE.PlaneGeometry(420, 420, 220, 220), oceanMat);
       water.rotation.x = -Math.PI / 2; water.position.y = -1.25; water.receiveShadow = true; scene.add(water);
@@ -256,6 +256,21 @@ export function ImmersiveWorld() {
       const cockpit = new THREE.Mesh(new THREE.SphereGeometry(0.42,12,8),windowMat);
       cockpit.scale.set(1.7,0.7,0.85); cockpit.position.set(8.2,0.24,0); aircraft.add(cockpit);
       box(aircraft,[0.22,1.2,2.4],orange,[-8.2,0.7,0]);
+      // Wing control surfaces and navigation lights make the aircraft read as a complete machine.
+      box(aircraft,[5.7,0.055,5.6],mat("#d7e2e0",0.55,0.42),[0,-0.005,0]);
+      box(aircraft,[1.4,0.08,4.2],mat("#bacbc9",0.55,0.42),[-0.2,-0.025,0]);
+      const navRed=new THREE.Mesh(new THREE.SphereGeometry(0.16,10,8),new THREE.MeshBasicMaterial({color:0xff514c}));
+      navRed.position.set(-0.4,0,10.4); aircraft.add(navRed);
+      const navGreen=new THREE.Mesh(new THREE.SphereGeometry(0.16,10,8),new THREE.MeshBasicMaterial({color:0x57f2b3}));
+      navGreen.position.set(-0.4,0,-10.4); aircraft.add(navGreen);
+      for(const side of [-1,1]) {
+        const gearLeg=new THREE.Mesh(new THREE.CylinderGeometry(0.07,0.09,1.25,8),steel);
+        gearLeg.position.set(1.8,-1.05,side*2.4); aircraft.add(gearLeg);
+        for(const wheelX of [-0.18,0.18]) {
+          const gearWheel=new THREE.Mesh(new THREE.CylinderGeometry(0.24,0.24,0.16,12),rubber);
+          gearWheel.rotation.x=Math.PI/2; gearWheel.position.set(1.8+wheelX,-1.63,side*2.4); aircraft.add(gearWheel);
+        }
+      }
       // Rail: ballast, sleepers, paired rails, engine and five intermodal wagons.
       const rail = groupAt(18,0,-2);
       box(rail,[64,0.35,11],mat("#29343a",0.2,0.9),[0,-0.72,0]);
