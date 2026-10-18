@@ -252,18 +252,21 @@ export function ImmersiveWorld() {
         pointer.x += (pointer.tx-pointer.x)*0.075;
         pointer.y += (pointer.ty-pointer.y)*0.075;
         const posAttr = trailGeometry.getAttribute("position") as import("three").BufferAttribute;
-        const idx = (trailHead % cursorTrailCount) * 3;
-        trailPositions[idx] = worldPointer.x + (Math.random()-0.5)*0.9;
-        trailPositions[idx+1] = worldPointer.y + (Math.random()-0.5)*0.7;
-        trailPositions[idx+2] = worldPointer.z + (Math.random()-0.5)*0.9;
-        trailHead++;
+        const pointerSpeed = Math.hypot(pointer.tx-pointer.x,pointer.ty-pointer.y);
+        if(pointerSpeed > 0.006) {
+          const idx = (trailHead % cursorTrailCount) * 3;
+          trailPositions[idx] = worldPointer.x + (Math.random()-0.5)*0.42;
+          trailPositions[idx+1] = worldPointer.y + (Math.random()-0.5)*0.32;
+          trailPositions[idx+2] = worldPointer.z + (Math.random()-0.5)*0.42;
+          trailHead++;
+        }
         for (let i=0;i<cursorTrailCount;i++) {
           const j=i*3;
-          trailPositions[j] += (Math.sin(t*0.7+i*0.12)*0.0015);
-          trailPositions[j+1] += 0.001 + Math.sin(t+i*0.07)*0.001;
+          trailPositions[j] += Math.sin(t*0.7+i*0.12)*0.0007;
+          trailPositions[j+1] += 0.0004 + Math.sin(t+i*0.07)*0.0006;
         }
         posAttr.needsUpdate = true;
-        trailMaterial.opacity = 0.28 + Math.min(0.42, Math.hypot(pointer.tx-pointer.x,pointer.ty-pointer.y)*0.8);
+        trailMaterial.opacity = 0.12 + Math.min(0.58, pointerSpeed*2.4);
         const routePhase = (t*0.055)%1;
         routePulse.position.copy(routeCurve.getPoint(routePhase));
         beaconLight.position.copy(routePulse.position); beaconLight.position.y += 1.8;
