@@ -533,3 +533,14 @@ html{scroll-behavior:smooth;scroll-padding-top:0}body{background:var(--world-bg)
 /* Keep left/top overridable by direct pointer coordinates set from JS. */
 .ncsi-journey .journey-cursor{position:fixed!important;left:0;top:0;right:auto!important;bottom:auto!important;margin:0!important;pointer-events:none!important;transform:translate(-50%,-50%) rotate(var(--cursor-angle,0deg))!important}
 .ncsi-journey .journey-cursor.cursor-ship{transform:translate(-50%,-50%)!important}
+
+
+/* Larger cursor and transient pastel air-disturbance wake. */
+.ncsi-journey .journey-cursor.cursor-ship{width:68px!important;height:68px!important}
+.ncsi-journey .journey-cursor.cursor-flight{width:68px!important;height:68px!important}
+.ncsi-journey .journey-cursor .cursor-vehicle{font-size:34px!important}
+.ncsi-journey .journey-cursor.cursor-flight .cursor-vehicle{font-size:38px!important}
+.ncsi-journey .journey-cursor.cursor-flight:before{width:62px;height:3px;background:linear-gradient(90deg,transparent,rgba(169,220,212,.92));filter:blur(.3px)}
+.ncsi-journey .journey-air-traces{position:fixed;inset:0;z-index:20;pointer-events:none;overflow:hidden;display:none}
+.ncsi-journey .journey-air-traces.is-active{display:block}
+.ncsi-journey .journey-air-traces span{position:fixed;display:block;border-radius:50%;background:radial-gradient(circle,rgba(208,242,237,.95) 0%,rgba(131,201,189,.7) 40%,rgba(131,201,189,0) 100%);box-shadow:0 0 12px rgba(169,220,212,.45);pointer-events:none;will-change:left,top,opacity,transform}
