@@ -19,8 +19,8 @@ export function ImmersiveWorld() {
   const [inquiry, setInquiry] = useState(false);
   const pointerRef = useRef({ x: -100, y: -100, angle: 0 });
   const cursorRef = useRef<HTMLDivElement>(null);
-
-  function handlePointerMove(event: React.PointerEvent<HTMLElement>) {
+  const handlePointerMoveRef = useRef<(event: PointerEvent) => void>(() => {});
+  handlePointerMoveRef.current = (event: PointerEvent) => {
     const p = pointerRef.current;
     const dx = event.clientX - p.x;
     const dy = event.clientY - p.y;
@@ -33,6 +33,10 @@ export function ImmersiveWorld() {
       cursor.style.top = `${event.clientY}px`;
       cursor.style.setProperty("--cursor-angle", `${p.angle}deg`);
     }
+  };
+
+  function handlePointerMove(event: React.PointerEvent<HTMLElement>) {
+    handlePointerMoveRef.current(event.nativeEvent);
   }
 
   useEffect(() => {
@@ -180,6 +184,9 @@ export function ImmersiveWorld() {
   }, []);
 
   useEffect(() => {
+    const move = (event: PointerEvent) => handlePointerMoveRef.current(event);
+    window.addEventListener("pointermove", move, { passive: true });
+    window.addEventListener("mousemove", move, { passive: true });
     let raf = 0;
     const update = () => {
       if (raf) return;
@@ -197,7 +204,7 @@ export function ImmersiveWorld() {
     update();
     window.addEventListener("scroll", update, { passive: true });
     window.addEventListener("resize", update);
-    return () => { if (raf) window.cancelAnimationFrame(raf); window.removeEventListener("scroll", update); window.removeEventListener("resize", update); };
+    return () => { if (raf) window.cancelAnimationFrame(raf); window.removeEventListener("scroll", update); window.removeEventListener("resize", update); window.removeEventListener("pointermove", move); window.removeEventListener("mousemove", move); };
   }, []);
 
   useEffect(() => {
