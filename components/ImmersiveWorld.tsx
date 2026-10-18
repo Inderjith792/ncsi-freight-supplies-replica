@@ -114,7 +114,8 @@ export function ImmersiveWorld() {
         if (disposed) return;
         const t = (now - start) / 1000;
         // Slow yaw plus a gentle roll reveals different nebula regions without distracting from the copy.
-        world.rotation.y = t * 0.035 + progress * Math.PI * 0.32;
+        const scrollProgress = Number(document.documentElement.style.getPropertyValue("--journey-progress")) || 0;
+        world.rotation.y = t * 0.035 + scrollProgress * Math.PI * 0.32;
         world.rotation.x = Math.sin(t * 0.11) * 0.035;
         world.rotation.z = Math.sin(t * 0.07) * 0.018;
         stars.rotation.y = -t * 0.003;
@@ -137,7 +138,7 @@ export function ImmersiveWorld() {
     }).catch((error) => console.error("Unable to initialize NCSI nebula scene:", error));
 
     return () => { disposed = true; if (frame) window.cancelAnimationFrame(frame); cleanup?.(); renderer?.dispose(); };
-  }, [progress]);
+  }, []);
 
   useEffect(() => {
     let raf = 0;
