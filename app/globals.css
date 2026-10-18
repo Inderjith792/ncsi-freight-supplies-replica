@@ -290,3 +290,22 @@ html{scroll-behavior:smooth;scroll-padding-top:0}body{background:var(--world-bg)
 .journey-footer{backdrop-filter:blur(2px)}
 @media(max-width:760px){.journey-cursor{display:none}.journey-vignette{background:linear-gradient(90deg,rgba(3,15,23,.86),rgba(3,15,23,.28)),linear-gradient(0deg,rgba(3,15,23,.64),transparent 55%)}}
 @media(prefers-reduced-motion:reduce){.journey-cursor{display:none}.journey-rail button.is-active i:after{animation:none}}
+
+/* Final cinematic freight pass: deepen scene contrast while keeping the WebGL assets legible. */
+.journey-webgl{filter:saturate(1.08) contrast(1.08) brightness(1.06);mix-blend-mode:normal}
+.journey-stage .journey-vignette{background:
+  radial-gradient(ellipse at 70% 44%,rgba(22,92,96,.04) 0%,rgba(2,10,16,.08) 42%,rgba(2,9,14,.42) 100%),
+  linear-gradient(90deg,rgba(2,12,18,.82) 0%,rgba(2,12,18,.56) 29%,rgba(2,12,18,.08) 62%,rgba(2,12,18,.03) 100%),
+  linear-gradient(0deg,rgba(2,10,15,.72) 0%,transparent 25%,rgba(2,10,15,.08) 72%,rgba(2,10,15,.28) 100%)}
+.journey-copy h1{text-wrap:balance;letter-spacing:-.075em;line-height:.91}
+.journey-copy>p{color:rgba(211,230,229,.82);text-shadow:0 2px 18px rgba(0,0,0,.38)}
+.journey-eyebrow,.journey-counter,.journey-footer{text-shadow:0 1px 12px rgba(0,0,0,.8)}
+.journey-cta{transition:transform .28s cubic-bezier(.2,.8,.2,1),background .28s ease,box-shadow .28s ease}
+.journey-cta:hover{box-shadow:0 0 0 1px rgba(159,240,221,.5),0 12px 36px rgba(41,183,164,.2)}
+.journey-rail button i{transition:width .35s ease,background .35s ease,box-shadow .35s ease}
+.journey-rail button.is-active i{box-shadow:0 0 16px rgba(125,244,220,.65)}
+@media(max-width:760px){
+ .journey-webgl{filter:saturate(1.04) contrast(1.04) brightness(1.04)}
+ .journey-stage .journey-vignette{background:linear-gradient(90deg,rgba(2,12,18,.78),rgba(2,12,18,.28) 70%,rgba(2,12,18,.12)),linear-gradient(0deg,rgba(2,10,15,.72),transparent 58%)}
+ .journey-copy h1{font-size:clamp(44px,12vw,76px)}
+}
