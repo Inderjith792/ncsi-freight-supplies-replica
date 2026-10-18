@@ -36,6 +36,8 @@ export function ImmersiveWorld() {
   }
 
   return <main className="world-experience" onPointerMove={move} style={{ "--world-x": pointer.x + "px", "--world-y": pointer.y + "px", "--scroll-progress": progress } as React.CSSProperties}>
+    <div className="world-cursor" aria-hidden="true"><span /></div>
+    <div className="world-scroll-index" aria-hidden="true"><span>SCROLL</span><b>{String(Math.round(progress * 100)).padStart(2, "0")}</b><i style={{ transform: `scaleY(${Math.max(.02, progress)})` }} /></div>
     <div className="world-progress"><span style={{ transform: `scaleX(${progress})` }} /></div>
     <header className="world-nav">
       <a className="world-brand" href="#top" aria-label="NCSI home"><span className="world-brand-mark">N</span><span><b>NCSI</b><small>FREIGHT SUPPLIES</small></span></a>
