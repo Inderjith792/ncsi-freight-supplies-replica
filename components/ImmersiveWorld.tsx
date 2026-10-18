@@ -221,9 +221,8 @@ export function ImmersiveWorld() {
   }, []);
 
   useEffect(() => {
-    const move = (event: PointerEvent) => handlePointerMoveRef.current(event);
-    window.addEventListener("pointermove", move, { passive: true });
-    window.addEventListener("mousemove", move, { passive: true });
+    // Cursor movement and its wake are handled by the dedicated effect above.
+    // This effect only synchronizes the active journey stage with scroll position.
     let raf = 0;
     const update = () => {
       if (raf) return;
